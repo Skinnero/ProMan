@@ -1,7 +1,9 @@
-import os
-import psycopg2
-import psycopg2.extras
+from os import environ
+from psycopg2 import connect, DatabaseError
+from psycopg2.extras import RealDictCursor
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def establish_connection(connection_data=None):
     """
@@ -16,45 +18,27 @@ def establish_connection(connection_data=None):
                                                                      connection_data['user'],
                                                                      connection_data['host'],
                                                                      connection_data['password'])
-        conn = psycopg2.connect(connect_str)
+        conn = connect(connect_str)
         conn.autocommit = True
-    except psycopg2.DatabaseError as e:
+        return conn.cursor(cursor_factory=RealDictCursor)
+    except DatabaseError as e:
         print("Cannot connect to database.")
         print(e)
-    else:
-        return conn
 
-
-def get_connection_data(db_name=None):
+def get_connection_data(db_name:str = None):
     """
     Give back a properly formatted dictionary based on the environment variables values which are started
     with :MY__PSQL_: prefix
     :db_name: optional parameter. By default it uses the environment variable value.
     """
     if db_name is None:
-        db_name = os.environ.get('MY_PSQL_DBNAME')
+        db_name = environ.get('MY_PSQL_DBNAME')
 
     return {
         'dbname': db_name,
-        'user': os.environ.get('MY_PSQL_USER'),
-        'host': os.environ.get('MY_PSQL_HOST'),
-        'password': os.environ.get('MY_PSQL_PASSWORD')
+        'user': environ.get('MY_PSQL_USER'),
+        'host': environ.get('MY_PSQL_HOST'),
+        'password': environ.get('MY_PSQL_PASSWORD')
     }
 
-
-def execute_select(statement, variables=None, fetchall=True):
-    """
-    Execute SELECT statement optionally parameterized.
-    Use fetchall=False to get back one value (fetchone)
-
-    Example:
-    > execute_select('SELECT %(title)s; FROM shows', variables={'title': 'Codecool'})
-    statement: SELECT statement
-    variables:  optional parameter dict, optional parameter fetchall"""
-    result_set = []
-    with establish_connection() as conn:
-        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cursor:
-            cursor.execute(statement, variables)
-            result_set = cursor.fetchall() if fetchall else cursor.fetchone()
-    return result_set
-
+CURSOR = establish_connection()
