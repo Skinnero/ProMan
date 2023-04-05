@@ -1,15 +1,7 @@
-from functools import wraps
-from flask import jsonify
+import bcrypt
 
+def hash_user_password(pw:str):
+    return bcrypt.hashpw(pw.encode(), bcrypt.gensalt()).decode()
 
-def json_response(func):
-    """
-    Converts the returned dictionary into a JSON response
-    :param func:
-    :return:
-    """
-    @wraps(func)
-    def decorated_function(*args, **kwargs):
-        return jsonify(func(*args, **kwargs))
-
-    return decorated_function
+def compare_password(pw:str, hashed_pw:str):
+    return bcrypt.checkpw(pw.encode(), hashed_pw.encode())
