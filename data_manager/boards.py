@@ -2,14 +2,14 @@ from data_manager.db_connection import CURSOR
 from data_manager.columns import create_default_columns
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
 
-def get_one_by_id(id:str):
+def get_one(id:str):
     """Get board by it's id
 
     Args:
-        id (str): board id
+        id (str): board id from endpoint
 
     Returns:
-        dict: board values
+        RealDictRow: dict with keys, {name, private, user_id}
     """    
     try:
         id = int(id)
@@ -20,23 +20,23 @@ def get_one_by_id(id:str):
         return False
 
 def get_all():
-    """Get all boards from DB
+    """Gets all boards from DB
 
     Returns:
-        list: list of dictionaries
+        list[RealDictRow]: list of dicts with boards values
     """    
     query = 'SELECT * FROM boards;'
     CURSOR.execute(query)
     return CURSOR.fetchall()
 
 def delete_by_id(id:str):
-    """Deletes board by id
+    """Deletes board by it's id
 
     Args:
-        id (str): str with board's id
+        id (str): board id from endpoint
 
     Returns:
-        bool: true if succesful otherwise false
+        bool + str: true if successfull else false, finally feedback
     """    
     try:
         id = int(id)
@@ -54,13 +54,13 @@ def add(data:dict):
     """Inserts new board into the table
 
     Args:
-        data (dict): dict with key 'name' and 'user_id'
+        data (dict): dict with keys, {name, user_id}
     """
-    def get_most_recent():
+    def get_most_recent_added():
         """Gets most recet added board
 
         Returns:
-            dict: dict with most recent board values
+            RealDictRow : dict with most recent board values
         """        
         query = 'SELECT * FROM boards ORDER BY id DESC'
         CURSOR.execute(query)
@@ -70,7 +70,7 @@ def add(data:dict):
         data = [data['name'], data['user_id']]
         query = 'INSERT INTO boards(name, user_id) VALUES (%s, %s)'
         CURSOR.execute(query, data)
-        create_default_columns(get_most_recent())
+        create_default_columns(get_most_recent_added())
         return 'Board Created'
     
     except KeyError:
@@ -83,10 +83,11 @@ def update_by_id(id:str, data:dict):
     """Updates boards by it's id
 
     Args:
-        data (dict): dict with key 'id'
+        id (str): board id from endpoint
+        data (dict): dict with key, {private or name}
 
     Returns:
-        bool: true if succesful otherwise false
+        bool + str: true if successfull else false, finally feedback
     """    
     
     def set_private(id:str, data:dict):
@@ -109,6 +110,3 @@ def update_by_id(id:str, data:dict):
     except ValueError:
         return False, 'ValueError: Passed wrong value'
     return True, 'Board updated successfully'
-
-
-    

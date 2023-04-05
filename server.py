@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 from route.boards import api_boards
 from route.columns import api_columns
 from route.cards import api_cards
@@ -22,6 +22,8 @@ def index():
     return render_template('index.html')
 
 def main():
+    """Main function
+    """    
     app.run(debug=True)
 
 if __name__ == '__main__':

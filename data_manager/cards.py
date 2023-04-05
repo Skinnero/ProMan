@@ -1,13 +1,13 @@
 from data_manager.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
 
-def get_one_by_id(id:str):
+def get_one(id:str):
     """Get card by it's id
 
     Args:
-        id (str): card id
+        id (str): card id from endpoint
     Returns:
-        dict: card values
+        RealDictRow : dict with keys, {id, message, order_number, completed, archived, column_id}
     """    
     try:
         id = int(id)
@@ -17,14 +17,14 @@ def get_one_by_id(id:str):
     except ValueError:
         return False
 
-def get_by_column_id(id:str):
-    """Return all cards that belongs to the board
+def get_all_by_column_id(column_id:str):
+    """Gets all cards from column id
 
     Args:
-        id (str): card id
+        id (str): column id from endpoint
 
     Returns:
-        list: list of cards value
+        list[RealDictRow]: list of cards values
     """    
     try:
         column_id = int(id)
@@ -38,15 +38,19 @@ def get_by_column_id(id:str):
     except KeyError:
         return False,'KeyError: Passed wrong key'
 
-def add(id:str, data:dict):
+def add(column_id:str, data:dict):
     """Inserts new card into the table
 
     Args:
-        data (dict): dict with key 'name' and 'column_id'
+        column_id (str): column id from endpoint
+        data (dict): dict with keys, {message}
+    
+    Returns:
+        bool + str: true if successfull else false, finally feedback
     """
     try:
-        id = int(id)
-        data = [data['message'], get_new_order_number(id), id]
+        column_id = int(column_id)
+        data = [data['message'], get_new_order_number(column_id), column_id]
         query = 'INSERT INTO cards(message, order_number, column_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Card created successfully'
@@ -56,13 +60,13 @@ def add(id:str, data:dict):
         return False,'KeyError: Passed wrong key'
     
 def delete_by_id(id:str):
-    """Deletes card by id
+    """Deletes card by it's id
 
     Args:
-        data (dict): dict with card's id
+        id (id): card id 
 
     Returns:
-        bool: true if succesful otherwise false
+        bool + str: true if successfull else false, finally feedback
     """    
     try:
         id = int(id)
@@ -77,13 +81,14 @@ def delete_by_id(id:str):
         return False,'KeyError: Passed wrong key'
 
 def update_by_id(id:str, data:dict):
-    """Updates cards by it's id
+    """Takes arguments and checks which column should be updated
 
     Args:
-        data (dict): dict with key 'id'
+        id (str): card id 
+        data (dict): dict with key, {message or completed or order_number or archived}
 
     Returns:
-        bool: true if succesful otherwise false
+        bool + str: true if successfull else false, finally feedback
     """
     def set_completed(id:str, data:dict):
         data = [data['completed'], id]
@@ -121,10 +126,27 @@ def update_by_id(id:str, data:dict):
         return False, 'ValueError: Passed wrong value'
     return True, 'Column updated successfully'
     
-def get_new_order_number(id:int):
-    return len(get_by_column_id(id)[1]) + 1
+def get_new_order_number(column_id:int):
+    """Calls function that returns list of cards then 
+    add + 1 to its len and returns it
+
+    Args:
+        column_id (int): column id
+
+    Returns:
+        int: len of columns + 1
+    """    
+    return len(get_all_by_column_id(id)[1]) + 1
 
 def segregate(data:list):
+    """Takes list of data from json and updates every record
+
+    Args:
+        data (list): list with cards values
+
+    Returns:
+        bool + str: true if successfull else false, finally feedback
+    """    
     for record in data:
         result, message = update_by_id(record['id'], record)
         if not result:

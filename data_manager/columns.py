@@ -1,13 +1,14 @@
 from data_manager.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
 
-def get_one_by_id(id:str):
-    """Get column by it's id
+def get_one(id:str):
+    """Gets column by it's id and returns it
 
     Args:
-        id (str): column id
+        id (str): column id from endpoint
+        
     Returns:
-        dict: column values
+        RealDictRow: dict with keys, {id, name, order_number, board_id}
     """    
     try:
         id = int(id)
@@ -18,10 +19,10 @@ def get_one_by_id(id:str):
         return False
 
 def create_default_columns(data:dict):
-    """Creates default caolumns for new board
+    """Creates default columns for new board
 
     Args:
-        data (dict): board id
+        data (RealDictRow): data with {id} key
     """    
     board_id = data['id']
     query = f"""
@@ -32,17 +33,17 @@ def create_default_columns(data:dict):
     """
     CURSOR.execute(query)
 
-def get_by_board_id(id:str):
-    """Return all columns that belongs to the board
+def get_all_by_board_id(board_id:str):
+    """Returns all columns that belongs to the board
 
     Args:
-        id (str): columns id
+        id (str): board id from endpoint
 
     Returns:
-        list: list of columns value
+        list[RealDictRow]: list of columns with values
     """    
     try:
-        board_id = int(id)
+        board_id = int(board_id)
         query = 'SELECT * FROM columns WHERE board_id = %s ORDER BY order_number'
         CURSOR.execute(query, [board_id])
         if CURSOR.rowcount == 0:
@@ -57,10 +58,10 @@ def delete_by_id(id:str):
     """Deletes column by id
 
     Args:
-        id (str): str with columns's id
+        id (str): column id from endpoint
 
     Returns:
-        bool: true if succesful otherwise false
+        bool: true if succesful otherwise false, finally feedback
     """    
     try:
         id = int(id)
@@ -74,15 +75,19 @@ def delete_by_id(id:str):
     except KeyError:
         return False,'KeyError: Passed wrong key'
     
-def add(id:str, data:str):
-    """Inserts new column into the table
+def add(board_id:str, data:dict):
+    """Inserts new column into db
 
     Args:
-        id (str): str with board_id
-    """
+        id (str): board id from endpoint
+        data (dict): data with key, {name}
+
+    Returns:
+        bool + str: true if successfull else false, finally feedback
+    """    
     try:
-        id = int(id)
-        data = [data['name'], get_new_order_number(id), id]
+        board_id = int(board_id)
+        data = [data['name'], get_new_order_number(id), board_id]
         query = 'INSERT INTO columns(name, order_number, board_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Column created successfully'
@@ -91,16 +96,17 @@ def add(id:str, data:str):
     except KeyError:
         return False,'KeyError: Passed wrong key'
 
-def update_by_id(id:str, data:dict):
-    """Updates columns by it's id
+def update_by_id(id:str, data:dict):   
+    """Takes arguments and checks which column should be updated
 
     Args:
-        data (dict): dict with key 'id'
+        id (str): column id from endpoint
+        data (dict): data with key, {name or order_number}
 
     Returns:
-        bool: true if succesful otherwise false
-    """
-    def set_name(id:str, data:dict):
+        bool + str: true if successfull else false, finally feedback
+    """    
+    def set_name(id:str, data:dict):    
         data = [data['name'], id]
         query = 'UPDATE columns SET name = %s WHERE id = %s'
         CURSOR.execute(query, data)
@@ -123,14 +129,27 @@ def update_by_id(id:str, data:dict):
         return False, 'ValueError: Passed wrong value'
     return True, 'Column updated successfully'
 
-    
+def get_new_order_number(board_id:int):
+    """Calls function that returns list of columns then 
+    add + 1 to its len and returns it
 
-def get_new_order_number(id:int):
-    
-    return len(get_by_board_id(id)[1]) + 1
+    Args:
+        board_id (int): board id
+
+    Returns:
+        int: len of columns + 1
+    """    
+    return len(get_all_by_board_id(id)[1]) + 1
 
 def segregate(data:list):
+    """Takes list of data from json and updates every record
 
+    Args:
+        data (list): list with columns values
+
+    Returns:
+        bool + str: true if successfull else false, finally feedback
+    """    
     for record in data:
         result, message = update_by_id(record['id'], record)
         if not result:

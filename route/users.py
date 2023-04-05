@@ -6,6 +6,11 @@ api_users = Blueprint('api_users', __name__)
 
 @api_users.route('/api/users/sign-up', methods=['POST'])   
 def sing_up():
+    """Sings the user up and automaticly creates session for him
+
+    Returns:
+        str: feedback + status code
+    """    
     data = request.json
     try:
         data['password'] = hash_user_password(data['password'])
@@ -20,6 +25,12 @@ def sing_up():
     
 @api_users.route('/api/users/log-in', methods=['POST'])   
 def log_in():
+    """Checks if user provided correct data to be logged in
+    and creates session for him
+
+    Returns:
+        str: feedback + status code
+    """    
     data = request.json
     try:
         user_password = users.get_password_by_name(data['name'])
@@ -33,5 +44,10 @@ def log_in():
 
 @api_users.route('/api/users/log-out', methods=['GET'])
 def log_out():
+    """Clears session so user won't be logged in
+
+    Returns:
+        redirect: goes back to index website
+    """    
     session.clear()
     return redirect(url_for('index'))
