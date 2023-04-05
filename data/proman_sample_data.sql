@@ -35,6 +35,7 @@ CREATE TABLE cards (
     message text NOT NULL,
     order_number INTEGER NOT NULL,
     completed bool NOT NULL default false,
+    archived bool NOT NULL default false,
     column_id INTEGER NOT NULL
 );
 

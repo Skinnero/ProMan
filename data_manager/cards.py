@@ -28,7 +28,7 @@ def get_by_column_id(id:str):
     """    
     try:
         column_id = int(id)
-        query = 'SELECT * FROM cards WHERE column_id = %s'
+        query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived'
         CURSOR.execute(query, [column_id])
         if CURSOR.rowcount == 0:
                 raise ValueError
@@ -99,6 +99,11 @@ def update_by_id(id:str, data:dict):
         data = [data['order_number'], id]
         query = 'UPDATE cards SET order_number = %s WHERE id = %s'
         CURSOR.execute(query, data)
+
+    def set_archived(id:str, data:dict):
+        data = [data['archived'], id]
+        query = 'UPDATE cards SET archived = %s WHERE id = %s'
+        CURSOR.execute(query, data)
     try:
         id = int(id)
         if 'message' in data.keys():
@@ -108,6 +113,8 @@ def update_by_id(id:str, data:dict):
             set_order_number(id, data)
         elif 'completed' in data.keys():
             set_completed(id, data)
+        elif 'archived' in data.keys():
+            set_archived(id, data)
         else:
             return False,'KeyError: Passed wrong key'
     except ValueError:
