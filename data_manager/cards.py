@@ -17,17 +17,17 @@ def get_one_by_id(id:str):
     except ValueError:
         return False
 
-def get_by_column_id(data:dict):
+def get_by_column_id(id:str):
     """Return all cards that belongs to the board
 
     Args:
-        data (dict): card id
+        id (str): card id
 
     Returns:
         list: list of cards value
     """    
     try:
-        column_id = int(data['column_id'])
+        column_id = int(id)
         query = 'SELECT * FROM cards WHERE column_id = %s'
         CURSOR.execute(query, [column_id])
         if CURSOR.rowcount == 0:
@@ -38,15 +38,16 @@ def get_by_column_id(data:dict):
     except KeyError:
         return False,'KeyError: Passed wrong key'
 
-def add(data:dict):
+def add(id:str, data:dict):
     """Inserts new card into the table
 
     Args:
         data (dict): dict with key 'name' and 'column_id'
     """
     try:
-        data = [data['message'], data['column_id']]
-        query = 'INSERT INTO cards(message, column_id) VALUES (%s, %s)'
+        id = int(id)
+        data = [data['message'], get_new_order_number(id), id]
+        query = 'INSERT INTO cards(message, order_number, column_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Card created successfully'
     except (ForeignKeyViolation, InvalidTextRepresentation):
@@ -54,7 +55,7 @@ def add(data:dict):
     except KeyError:
         return False,'KeyError: Passed wrong key'
     
-def delete_by_id(data:dict):
+def delete_by_id(id:str):
     """Deletes card by id
 
     Args:
@@ -64,7 +65,7 @@ def delete_by_id(data:dict):
         bool: true if succesful otherwise false
     """    
     try:
-        id = int(data['id'])
+        id = int(id)
         query = 'DELETE FROM cards where id = %s'
         CURSOR.execute(query, [id])
         if CURSOR.rowcount == 0:
@@ -75,26 +76,50 @@ def delete_by_id(data:dict):
     except KeyError:
         return False,'KeyError: Passed wrong key'
 
-def change_message_by_id(data:dict):
-    """Updates card by it's id
+def update_by_id(id:str, data:dict):
+    """Updates cards by it's id
 
     Args:
         data (dict): dict with key 'id'
 
     Returns:
         bool: true if succesful otherwise false
-    """    
-    try:
-        id = int(data['id'])
+    """
+    def set_completed(id:str, data:dict):
+        data = [data['completed'], id]
+        query = 'UPDATE cards SET completed = %s WHERE id = %s'
+        CURSOR.execute(query, data)
+        
+    def set_message(id:str, data:dict):
         data = [data['message'], id]
         query = 'UPDATE cards SET message = %s WHERE id = %s'
         CURSOR.execute(query, data)
-        if CURSOR.rowcount == 0:
-            raise ValueError
-        return True, 'Column updated successfully'
+        
+    def set_order_number(id:str, data:dict):
+        data = [data['order_number'], id]
+        query = 'UPDATE cards SET order_number = %s WHERE id = %s'
+        CURSOR.execute(query, data)
+    try:
+        id = int(id)
+        if 'message' in data.keys():
+            set_message(id, data)
+        elif 'order_number' in data.keys():
+            data['order_number'] = int(data['order_number'])
+            set_order_number(id, data)
+        elif 'completed' in data.keys():
+            set_completed(id, data)
+        else:
+            return False,'KeyError: Passed wrong key'
     except ValueError:
         return False, 'ValueError: Passed wrong value'
-    except KeyError:
-        return False,'KeyError: Passed wrong key'
+    return True, 'Column updated successfully'
+    
+def get_new_order_number(id:int):
+    return len(get_by_column_id(id)[1]) + 1
 
-  
+def segregate(data:list):
+    for record in data:
+        result, message = update_by_id(record['id'], record)
+        if not result:
+            return False, message
+    return True, message

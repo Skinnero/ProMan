@@ -29,17 +29,17 @@ def get_all():
     CURSOR.execute(query)
     return CURSOR.fetchall()
 
-def delete_by_id(data:dict):
+def delete_by_id(id:str):
     """Deletes board by id
 
     Args:
-        data (dict): dict with board's id
+        id (str): str with board's id
 
     Returns:
         bool: true if succesful otherwise false
     """    
     try:
-        id = int(data['id'])
+        id = int(id)
         query = 'DELETE FROM boards where id = %s'
         CURSOR.execute(query, [id])
         if CURSOR.rowcount == 0:
@@ -79,7 +79,7 @@ def add(data:dict):
     except (ForeignKeyViolation, InvalidTextRepresentation):
         return 'InvalidTextRepresentation or ForeignKeyViolation: Passed wrong values'
 
-def rename_by_id(data:dict):
+def update_by_id(id:str, data:dict):
     """Updates boards by it's id
 
     Args:
@@ -88,16 +88,27 @@ def rename_by_id(data:dict):
     Returns:
         bool: true if succesful otherwise false
     """    
-    try:
-        id = int(data['id'])
+    
+    def set_private(id:str, data:dict):
+        data = [data['private'], id]
+        query = 'UPDATE boards SET private = %s WHERE id = %s'
+        CURSOR.execute(query, data)
+
+    def set_name(id:str, data:dict):
         data = [data['name'], id]
         query = 'UPDATE boards SET name = %s WHERE id = %s'
         CURSOR.execute(query, data)
-        if CURSOR.rowcount == 0:
-            raise ValueError
-        return True, 'Board updated successfully'
+    try:
+        id = int(id)
+        if 'name' in data.keys():
+            set_name(id, data)
+        elif 'private' in data.keys():
+            set_private(id, data)
+        else:
+            return False, 'KeyError: Passed wrong key'
     except ValueError:
         return False, 'ValueError: Passed wrong value'
-    except KeyError:
-        return False, 'KeyError: Passed wrong key'
+    return True, 'Board updated successfully'
+
+
     

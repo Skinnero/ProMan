@@ -1,37 +1,36 @@
 from flask import Blueprint, request, jsonify
-import data_manager.columns as colmuns
+import data_manager.columns as columns
 
 api_columns = Blueprint('api_columns', __name__)
 
-@api_columns.route('/api/columns/<id>', methods=['GET'])
-def get_one(id):
-    data = colmuns.get_one_by_id(id)
-    if data is None or data is False:
-        return 'Endpoint not found', 404
-    return jsonify(data), 200
-
-@api_columns.route('/api/columns', methods=['GET','POST','DELETE','PATCH'])
-def crud():
+@api_columns.route('/api/boards/<board_id>/columns', methods=['GET', 'POST', 'PATCH'])
+def manage_all_columns_from_board(board_id):
     if request.method == 'GET':
-        result, data = colmuns.get_by_board_id(request.json)
-        if result:
-            return jsonify(data), 200
-        return data, 404
+        result, data = columns.get_by_board_id(board_id)
+        return (jsonify(data), 200) if result else (data, 404)
+
+    elif request.method == 'POST':
+        result, message = columns.add(board_id, request.json)
+        return (message, 200) if result else (message, 404)
+
+    elif request.method == 'PATCH':
+        result, message =  columns.segregate(request.json)
+        return (message, 200) if result else (message, 404)
+
+@api_columns.route('/api/columns/<column_id>', methods=['GET', 'POST', 'DELETE', 'PATCH'])
+def manage_single_column(column_id):
+    if request.method == 'GET':
+        data = columns.get_one_by_id(column_id)
+        if data is None or data is False:
+            return 'Endpoint not found', 404
+        return jsonify(data), 200
     
     elif request.method == 'DELETE':
-        result, message = colmuns.delete_by_id(request.json)
-        if result:
-            return message, 200
-        return message, 404
+        result, message = columns.delete_by_id(column_id)
+        return (message, 200) if result else (message, 404)
     
     elif request.method == 'PATCH':
-        result, message = colmuns.rename_by_id(request.json)
-        if result:
-            return message, 200
-        return message, 404
+        result, message = columns.update_by_id(column_id, request.json)
+        return (message, 200) if result else (message, 404)
     
-    elif request.method == 'POST':
-        result, message = colmuns.add(request.json)
-        if result:
-            return message, 200
-        return message, 404
+
