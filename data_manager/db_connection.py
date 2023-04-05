@@ -14,10 +14,12 @@ def establish_connection(connection_data=None):
     if connection_data is None:
         connection_data = get_connection_data()
     try:
-        connect_str = "dbname={} user={} host={} password={}".format(connection_data['dbname'],
-                                                                     connection_data['user'],
-                                                                     connection_data['host'],
-                                                                     connection_data['password'])
+        connect_str = "dbname={} user={} host={} password={}".format(
+            connection_data['dbname'],
+            connection_data['user'],
+            connection_data['host'],
+            connection_data['password']
+        )
         conn = connect(connect_str)
         conn.autocommit = True
         return conn.cursor(cursor_factory=RealDictCursor)
