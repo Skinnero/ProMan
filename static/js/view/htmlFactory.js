@@ -1,6 +1,7 @@
 export const htmlTemplates = {
     board: 1,
-    card: 2
+    card: 2,
+    buttonBuilder: 3,
 }
 
 export const builderFunctions = {
@@ -31,3 +32,6 @@ function cardBuilder(card) {
     return `<div class="card" data-card-id="${card.id}">${card.title}</div>`;
 }
 
+function buttonBuilder() {
+    return `<button class="create-board-button">Create Board</button>`;
+  }
