@@ -6,7 +6,8 @@ export const htmlTemplates = {
 
 export const builderFunctions = {
     [htmlTemplates.board]: boardBuilder,
-    [htmlTemplates.card]: cardBuilder
+    [htmlTemplates.card]: cardBuilder,
+    [htmlTemplates.newBoardButton]: buttonBuilder
 };
 
 export function htmlFactory(template) {
