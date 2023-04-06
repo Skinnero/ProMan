@@ -1,9 +1,12 @@
+import { boards, cards } from "./mock.js";
+
 export let dataHandler = {
     getBoards: async function () {
-        return await apiGet("/api/boards");
+        return boards;
     },
     getBoard: async function (boardId) {
         // the board is retrieved and then the callback function is called with the board
+        return await apiGet(`/api/boards/<${boardId}>`);
     },
     getStatuses: async function () {
         // the statuses are retrieved and then the callback function is called with the statuses
@@ -12,7 +15,7 @@ export let dataHandler = {
         // the status is retrieved and then the callback function is called with the status
     },
     getCardsByBoardId: async function (boardId) {
-        return await apiGet(`/api/boards/${boardId}/cards/`);
+        return cards;
     },
     getCard: async function (cardId) {
         // the card is retrieved and then the callback function is called with the card
