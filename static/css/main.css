@@ -1,3 +1,72 @@
-#boards {
+body{
+    background-color:  rgb(214, 252, 214);
+    margin: 0;
+}
+#nav{
     background-color: green;
+    width: 100%;
+    position: absolute;
+    z-index: 1;
+    border-bottom: 1px solid rgb(158, 158, 158);
+}
+#nav ul{
+    display: inline-flex;
+    list-style: none;
+    margin: 0;
+}
+#nav li button{
+    font-size: 32px;
+    border: none;
+    background-color: green;
+}
+#nav li button:hover{
+    color: white;
+    cursor: pointer;
+}
+.left-panel{
+    position: absolute;
+    background-color: green;
+    width: 20vh;
+    height: 100vh;
+}
+.left-panel textarea{
+    margin-top: 40px;
+}
+.left-panel button{
+    margin-top: 40px;
+    border: none;
+    background-color: inherit;
+    font-size: 26px;
+    cursor: pointer;
+}
+.board-title{
+    position: fixed;
+    width: 75%;
+    top: 10%;
+    left: 20%;
+    text-align: center;
+}
+.board{
+    white-space: nowrap;
+    position: fixed;
+    width: 75%;
+    top: 10%;
+    left: 20%;
+    overflow-x: auto;
+}
+
+.board .column{
+    background-color: aqua;
+    display: inline-flex;
+    flex-direction: column;
+    margin: 15%;
+}
+textarea{
+    border-radius: 2px;
+    resize: none;
+    font-size: 26px;
+    height: 28px;
+    overflow: hidden;
+    width: 166px;
+    border: none;
 }

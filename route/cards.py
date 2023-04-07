@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-import data_manager.cards as cards
+import data_handler.cards as cards
 
 api_cards = Blueprint('api_cards', __name__)
 

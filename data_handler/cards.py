@@ -1,6 +1,5 @@
-from data_manager.db_connection import CURSOR
+from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-
 def get_one_by_id(id:str):
     """Get card by it's id
 
@@ -66,8 +65,10 @@ def delete_by_id(id:str):
     """    
     try:
         id = int(id)
+        card_data = get_one_by_id(id)
         query = 'DELETE FROM cards where id = %s'
         CURSOR.execute(query, [id])
+        sort_out(card_data['column_id'], card_data['order_number'])
         if CURSOR.rowcount == 0:
             raise ValueError
         return True, 'Card deleted successfully'
@@ -130,3 +131,10 @@ def segregate(data:list):
         if not result:
             return False, message
     return True, message
+
+def sort_out(column_id:int, order_number:int):
+    data = [column_id, order_number]
+    query = '''
+    UPDATE cards SET order_number = order_number - 1 
+    WHERE column_id = %s AND order_number > %s'''
+    CURSOR.execute(query, data)

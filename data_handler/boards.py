@@ -1,5 +1,5 @@
-from data_manager.db_connection import CURSOR
-from data_manager.columns import create_default_columns
+from data_handler.db_connection import CURSOR
+from data_handler.columns import create_default_columns
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
 
 def get_one_by_id(id:str):
@@ -25,7 +25,7 @@ def get_all():
     Returns:
         list: list of dictionaries
     """    
-    query = 'SELECT * FROM boards;'
+    query = 'SELECT * FROM boards ORDER BY id'
     CURSOR.execute(query)
     return CURSOR.fetchall()
 

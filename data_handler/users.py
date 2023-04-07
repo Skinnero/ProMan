@@ -1,4 +1,4 @@
-from data_manager.db_connection import CURSOR
+from data_handler.db_connection import CURSOR
 from psycopg2.errors import UniqueViolation
 
 def add(data:dict):

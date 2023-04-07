@@ -1,6 +1,6 @@
-from data_manager.db_connection import CURSOR
+from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-
+# TODO: order number on deletion
 def get_one_by_id(id:str):
     """Get column by it's id
 
@@ -64,8 +64,10 @@ def delete_by_id(id:str):
     """    
     try:
         id = int(id)
+        column_data = get_one_by_id(id)
         query = 'DELETE FROM columns where id = %s'
         CURSOR.execute(query, [id])
+        sort_out(column_data['board_id'], column_data['order_number'])
         if CURSOR.rowcount == 0:
             raise ValueError
         return True, 'Column deleted successfully'
@@ -130,10 +132,18 @@ def get_new_order_number(id:int):
     return len(get_by_board_id(id)[1]) + 1
 
 def segregate(data:list):
-
+    
     for record in data:
         result, message = update_by_id(record['id'], record)
         if not result:
             return False, message
 
     return True, message
+
+
+def sort_out(board_id:int, order_number:int):
+    data = [board_id, order_number]
+    query = '''
+    UPDATE columns SET order_number = order_number - 1 
+    WHERE board_id = %s AND order_number > %s'''
+    CURSOR.execute(query, data)

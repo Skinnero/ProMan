@@ -1,5 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for
-import data_manager.users as users
+import data_handler.users as users
 from util import hash_user_password, compare_password
 
 api_users = Blueprint('api_users', __name__)
@@ -31,7 +31,7 @@ def log_in():
     except KeyError:
         return 'KeyError: Passed wrong key', 404
 
-@api_users.route('/api/users/log-out', methods=['GET'])
+@api_users.route('/log-out', methods=['GET'])
 def log_out():
     session.clear()
     return redirect(url_for('index'))

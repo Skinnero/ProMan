@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-import data_manager.boards as boards
+import data_handler.boards as boards
 
 api_boards = Blueprint('api_boards', __name__)
 

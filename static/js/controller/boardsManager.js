@@ -1,25 +1,17 @@
-import {dataHandler} from "../data/dataHandler.js";
-import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
-import {domManager} from "../view/domManager.js";
-import {cardsManager} from "./cardsManager.js";
+import { getBoards } from "../data_handler/boards.js";
+import * as boardsFactory from "../view/html_builders/boardsFactory.mjs"
 
-export let boardsManager = {
-    loadBoards: async function () {
-        const boards = await dataHandler.getBoards();
-        for (let board of boards) {
-            const boardBuilder = htmlFactory(htmlTemplates.board);
-            const content = boardBuilder(board);
-            domManager.addChild("#root", content);
-            domManager.addEventListener(
-                `.toggle-board-button[data-board-id="${board.id}"]`,
-                "click",
-                showHideButtonHandler
-            );
-        }
-    },
-};
+export async function setBoards() {
+    const boards = await getBoards()
+    setDivOnWebsite()
+    let leftPanel = ``
+    for (const board of boards) {
+        leftPanel += boardsFactory.getBoardsList(board)
+    }
+    document.getElementsByClassName('left-panel')[0].innerHTML += leftPanel
+}
 
-function showHideButtonHandler(clickEvent) {
-    const boardId = clickEvent.target.dataset.boardId;
-    cardsManager.loadCards(boardId);
+function setDivOnWebsite(){
+    let leftPanel = boardsFactory.getBoardsDiv()
+    document.body.appendChild(leftPanel)
 }

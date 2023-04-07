@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-import data_manager.columns as columns
+import data_handler.columns as columns
 
 api_columns = Blueprint('api_columns', __name__)
 
