@@ -25,7 +25,7 @@ def get_all():
     Returns:
         list[RealDictRow]: list of dicts with boards values
     """    
-    query = 'SELECT * FROM boards;'
+    query = 'SELECT * FROM boards ORDER BY id'
     CURSOR.execute(query)
     return CURSOR.fetchall()
 
