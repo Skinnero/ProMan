@@ -1,4 +1,4 @@
-import { boards, cards } from "./mock.js";
+import { boards, cards, columns } from "./mock.js";
 
 export let dataHandler = {
     getBoards: async function () {
@@ -13,6 +13,9 @@ export let dataHandler = {
     },
     getStatus: async function (statusId) {
         // the status is retrieved and then the callback function is called with the status
+    },
+    getColumnsByBoardId: async function (boardId) {
+        return columns;
     },
     getCardsByBoardId: async function (boardId) {
         return cards;

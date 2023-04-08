@@ -1,7 +1,7 @@
 import {dataHandler,apiPost} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
-import {cardsManager} from "./cardsManager.js";
+import {columnsManager} from "./columnsManager.js";
 import { editBoardTitleTemplate } from "../data/dataTemplates.js";
 
 export let boardsManager = {
@@ -27,7 +27,7 @@ export let boardsManager = {
 
 function showHideButtonHandler(clickEvent) {
     const boardId = clickEvent.target.dataset.boardId;
-    cardsManager.loadCards(boardId);
+    columnsManager.loadColumns(boardId);
 }
 
 function editBoardTitle (clickEvent) {

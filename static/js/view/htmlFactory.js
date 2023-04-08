@@ -1,11 +1,13 @@
 export const htmlTemplates = {
     board: 1,
-    card: 2,
-    buttonBuilder: 3,
+    column: 2,
+    card: 3,
+    buttonBuilder: 4,
 }
 
 export const builderFunctions = {
     [htmlTemplates.board]: boardBuilder,
+    [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
     [htmlTemplates.newBoardButton]: buttonBuilder
 };
@@ -31,8 +33,16 @@ function boardBuilder(board) {
             </div>`;
 }
 
+function columnBuilder(column) {
+    return `<div class="column" column-id="${column.id}">
+    <h4 column-id=${column.id}>${column.title}</h4>
+    </div>`;
+}
+
 function cardBuilder(card) {
-    return `<div class="card" data-card-id="${card.id}">${card.title}</div>`;
+    return `<div class="card" data-card-id="${card.id}">
+    <h4 data-card-id="${card.id}">${card.title}</h4
+    </div>`;
 }
 
 function buttonBuilder() {
