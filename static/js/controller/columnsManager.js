@@ -2,7 +2,7 @@ import {dataHandler, apiPost} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager } from "./cardManager.js";
-import { editColumnTitleTemplate } from "../data/dataTemplates.js";
+import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate } from "../data/dataTemplates.js";
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
@@ -19,6 +19,20 @@ export let columnsManager = {
                 cardsManager.loadCards(column.id, boardId);
             }
         }
+        const cardButtonBuilder = htmlFactory(htmlTemplates.newCard)
+        let content = cardButtonBuilder();
+        domManager.addChild(`.board[data-board-id="${boardId}"`, content);
+        const columnButtonBuilder = htmlFactory(htmlTemplates.newColumn)
+        content = columnButtonBuilder();
+        domManager.addChild(`.board[data-board-id="${boardId}"`, content);
+        domManager.addEventListener(
+            `.create-new-card`,
+            "click",
+            () => createNewCard(boardId));
+        domManager.addEventListener(
+            `.create-new-column`,
+            "click",
+            () => createNewColumn(boardId));
     },
 };
 
@@ -31,7 +45,6 @@ function editColumnTitle (clickEvent) {
     const input = document.createElement("input")
     input.value = boardTitle.innerText;
     boardTitle.replaceWith(input);
-    console.log(boardId)
     input.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           const newTitle = input.value;
@@ -40,4 +53,13 @@ function editColumnTitle (clickEvent) {
           apiPost(`/api/board/<${boardId}/edittitle>`, editColumnTitleTemplate(boardTitle))
         }}
     );
+}
+
+function createNewCard (boardId) {
+    let cardName = prompt("Enter card name.")
+    apiPost("/api/createcard", createCardTemplate(cardName,boardId))
+}
+function createNewColumn (boardId) {
+    let columnName = prompt("Enter column name.")
+    apiPost("/api/createcolumn", createColumnTemplate(columnName, boardId))
 }

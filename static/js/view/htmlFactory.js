@@ -3,13 +3,17 @@ export const htmlTemplates = {
     column: 2,
     card: 3,
     buttonBuilder: 4,
+    newCard: 5,
+    newColumn: 6,
 }
 
 export const builderFunctions = {
     [htmlTemplates.board]: boardBuilder,
     [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
-    [htmlTemplates.newBoardButton]: buttonBuilder
+    [htmlTemplates.newBoardButton]: buttonBuilder,
+    [htmlTemplates.newCard]: cardButtonBuilder,
+    [htmlTemplates.newColumn]: columnButtonBuilder,
 };
 
 export function htmlFactory(template) {
@@ -48,3 +52,10 @@ function cardBuilder(card) {
 function buttonBuilder() {
     return `<button class="create-board-button">Create Board</button>`;
   }
+
+function cardButtonBuilder() {
+    return `<br><button class="create-new-card">Create new card</button>`;
+}
+function columnButtonBuilder() {
+    return `<br><button class="create-new-column">Create new column</button>`;
+}
