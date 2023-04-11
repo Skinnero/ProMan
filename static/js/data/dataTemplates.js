@@ -29,3 +29,13 @@ export function createColumnTemplate(columnTitle, boardId) {
                        "boardId": `${boardId}`}
     return newCartJson
 }
+
+export function deleteBoardTemplate(boardId) {
+    let newBoardJson = {"boardId": `${boardId}`}
+    return newBoardJson
+}
+
+export function deleteColumnTemplate(columnId) {
+    let newBoardJson = {"boardname": `${columnId}`}
+    return newBoardJson
+}

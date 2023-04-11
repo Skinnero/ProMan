@@ -5,6 +5,9 @@ export const htmlTemplates = {
     buttonBuilder: 4,
     newCard: 5,
     newColumn: 6,
+    deleteBoard: 7,
+    deleteColumn: 8,
+    deleteCard: 9,
 }
 
 export const builderFunctions = {
@@ -14,6 +17,9 @@ export const builderFunctions = {
     [htmlTemplates.newBoardButton]: buttonBuilder,
     [htmlTemplates.newCard]: cardButtonBuilder,
     [htmlTemplates.newColumn]: columnButtonBuilder,
+    [htmlTemplates.deleteBoard]: boardDeleteButtonBuilder,
+    [htmlTemplates.deleteColumn]: columnDeleteButtonBuilder,
+    [htmlTemplates.deleteCard]: cardDeleteButtonBuilder,
 };
 
 export function htmlFactory(template) {
@@ -56,6 +62,19 @@ function buttonBuilder() {
 function cardButtonBuilder() {
     return `<br><button class="create-new-card">Create new card</button>`;
 }
+
 function columnButtonBuilder() {
     return `<br><button class="create-new-column">Create new column</button>`;
+}
+
+function boardDeleteButtonBuilder() {
+    return `<br><button class="delete-board">Delete board</button>`;
+}
+
+function columnDeleteButtonBuilder() {
+    return `<br><button class="delete-column">Delete column</button>`;
+}
+
+function cardDeleteButtonBuilder() {
+    return `<br><button class="delete-card">Delete card</button>`;
 }

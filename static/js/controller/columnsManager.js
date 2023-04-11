@@ -2,7 +2,8 @@ import {dataHandler, apiPost} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager } from "./cardManager.js";
-import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate } from "../data/dataTemplates.js";
+import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate,
+        deleteBoardTemplate, deleteColumnTemplate } from "../data/dataTemplates.js";
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
@@ -10,13 +11,20 @@ export let columnsManager = {
         for (let column of columns) {
             if (column.boardId == boardId) {
                 const cardBuilder = htmlFactory(htmlTemplates.column);
-                const content = cardBuilder(column);
+                let content = cardBuilder(column);
                 domManager.addChild(`.board[data-board-id="${boardId}"]`, content);
                 domManager.addEventListener(
                     `h4[column-id="${column.id}"]`,
                     "click",
                     editColumnTitle);
                 cardsManager.loadCards(column.id, boardId);
+                const columnDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteColumn)
+                content = columnDeleteButtonBuilder();
+                domManager.addChild(`.column[column-id="${column.id}"`, content);
+                domManager.addEventListener(
+                    `.delete-column`,
+                    "click",
+                    () => deleteColumn(column.id));
             }
         }
         const cardButtonBuilder = htmlFactory(htmlTemplates.newCard)
@@ -24,6 +32,9 @@ export let columnsManager = {
         domManager.addChild(`.board[data-board-id="${boardId}"`, content);
         const columnButtonBuilder = htmlFactory(htmlTemplates.newColumn)
         content = columnButtonBuilder();
+        domManager.addChild(`.board[data-board-id="${boardId}"`, content);
+        const boardDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteBoard)
+        content = boardDeleteButtonBuilder();
         domManager.addChild(`.board[data-board-id="${boardId}"`, content);
         domManager.addEventListener(
             `.create-new-card`,
@@ -33,6 +44,10 @@ export let columnsManager = {
             `.create-new-column`,
             "click",
             () => createNewColumn(boardId));
+        domManager.addEventListener(
+            `.delete-board`,
+            "click",
+            () => deleteBoard(boardId));
     },
 };
 
@@ -62,4 +77,15 @@ function createNewCard (boardId) {
 function createNewColumn (boardId) {
     let columnName = prompt("Enter column name.")
     apiPost("/api/createcolumn", createColumnTemplate(columnName, boardId))
+}
+function deleteBoard (boardId) {
+    apiPost(`/api/board/${boardId}/delete`, deleteBoardTemplate(boardId))
+}
+
+function deleteColumn (columnId) {
+    apiPost(`/api/column/${columnId}/delete`, deleteColumnTemplate(columnId))
+}
+
+function test (){
+    console.log('asdf')
 }

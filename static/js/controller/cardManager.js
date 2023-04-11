@@ -9,15 +9,19 @@ export let cardsManager = {
         for (let card of cards) {
             if (columnId == card.columnId) {
                 const cardBuilder = htmlFactory(htmlTemplates.card);
-                const content = cardBuilder(card);
+                let  content = cardBuilder(card);
                 domManager.addChild(`.column[column-id="${columnId}"]`, content);
                 domManager.addEventListener(
                     `h4[data-card-id="${card.id}"]`,
                     "click",
                     editCardTitle
                 );
+                const cardDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteCard)
+                content = cardDeleteButtonBuilder();
+                domManager.addChild(`.card[data-card-id="${card.id}"]`, content);
             }
         }
+
     },
 };
 
