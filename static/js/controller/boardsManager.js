@@ -1,7 +1,8 @@
-import {dataHandler} from "../data/dataHandler.js";
+import {dataHandler,apiPost} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
-import {cardsManager} from "./cardsManager.js";
+import {columnsManager} from "./columnsManager.js";
+import { editBoardTitleTemplate } from "../data/dataTemplates.js";
 
 export let boardsManager = {
     loadBoards: async function () {
@@ -15,11 +16,33 @@ export let boardsManager = {
                 "click",
                 showHideButtonHandler
             );
+            domManager.addEventListener(
+                `h3[data-board-id="${board.id}"]`,
+                "click",
+                editBoardTitle
+            );
         }
     },
 };
 
 function showHideButtonHandler(clickEvent) {
     const boardId = clickEvent.target.dataset.boardId;
-    cardsManager.loadCards(boardId);
+    columnsManager.loadColumns(boardId);
+}
+
+function editBoardTitle (clickEvent) {
+    const boardId = clickEvent.target.dataset.boardId;
+    const boardTitle = clickEvent.target;
+    const input = document.createElement("input")
+    input.value = boardTitle.innerText;
+    boardTitle.replaceWith(input);
+    console.log(boardId)
+    input.addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+          const newTitle = input.value;
+          input.replaceWith(boardTitle);
+          boardTitle.innerText = newTitle;
+          apiPost(`/api/board/<${boardId}/edittitle>`, editBoardTitleTemplate(boardTitle))
+        }}
+    );
 }
