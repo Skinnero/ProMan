@@ -50,7 +50,7 @@ function columnBuilder(column) {
 }
 
 function cardBuilder(card) {
-    return `<div class="card" data-card-id="${card.id}">
+    return `<div class="card" data-card-id="${card.id}" >
     <h4 data-card-id="${card.id}">${card.title}</h4
     </div>`;
 }
