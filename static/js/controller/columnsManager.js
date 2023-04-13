@@ -25,6 +25,16 @@ export let columnsManager = {
                     `.delete-column`,
                     "click",
                     () => deleteColumn(column.id));
+                domManager.addEventListener(
+                    `.column[column-id="${column.id}"]`,
+                    "drop",
+                    dropHandler
+                );
+                domManager.addEventListener(
+                    `.column[column-id="${column.id}"]`,
+                    "dragover",
+                    dragOverHandler
+                );
             }
         }
         const cardButtonBuilder = htmlFactory(htmlTemplates.newCard)
@@ -88,4 +98,17 @@ function deleteColumn (columnId) {
 
 function test (){
     console.log('asdf')
+}
+function dropHandler(event) {
+    event.preventDefault();
+    const cardId = event.dataTransfer.getData("text/plain");
+    const targetColumn = event.currentTarget;
+    const targetColumnId = targetColumn.dataset.columnId;
+    const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
+    targetColumn.appendChild(cardElement);
+    apiPost(`/api/cards/${cardId}/update-column`, { column_id: targetColumnId })
+}
+
+function dragOverHandler(event) {
+    event.preventDefault();
 }

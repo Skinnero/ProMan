@@ -16,5 +16,8 @@ export function createBoardButton () {
 
 function createBoardAction() {
     let boardName = prompt("Enter board name.")
+    const boardBuilder = htmlFactory(htmlTemplates.board);
+    const content = boardBuilder(boardName);
+    domManager.addChild("#root", content);
     apiPost("/api/createboard", createBoardTemplate(boardName))
 }

@@ -19,6 +19,11 @@ export let cardsManager = {
                 const cardDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteCard)
                 content = cardDeleteButtonBuilder();
                 domManager.addChild(`.card[data-card-id="${card.id}"]`, content);
+                const cardElement = document.querySelector(`.card[data-card-id="${card.id}"]`);
+                cardElement.draggable = true;
+                cardElement.addEventListener("dragstart", dragStartHandler);
+                cardElement.addEventListener("dragend", dragEndHandler);
+                
             }
         }
 
@@ -40,4 +45,19 @@ function editCardTitle (clickEvent) {
           apiPost(`/api/${card.id}>`, editCardTitleTemplate(cardTitle))
         }}
     );
+}
+
+function test () {
+    console.log('asdf')
+}
+
+function dragStartHandler(event) {
+    const cardElement = event.target;
+    event.dataTransfer.setData("text/plain", cardElement.dataset.cardId);
+}
+
+function dragEndHandler(event) {
+    const cardElement = event.target;
+    cardElement.removeEventListener("dragstart", dragStartHandler);
+    cardElement.removeEventListener("dragend", dragEndHandler);
 }
