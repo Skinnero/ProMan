@@ -28,7 +28,7 @@ export let boardsManager = {
 function showHideButtonHandler(clickEvent) {
     const boardId = clickEvent.target.dataset.boardId;
     columnsManager.loadColumns(boardId);
-    element.remove();
+    clickEvent.target.style.display = "none"
 }
 
 function editBoardTitle (clickEvent) {

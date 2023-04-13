@@ -4,9 +4,10 @@ import {domManager} from "../view/domManager.js";
 import { cardsManager } from "./cardManager.js";
 import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate,
         deleteBoardTemplate, deleteColumnTemplate } from "../data/dataTemplates.js";
-
+let boardId 
 export let columnsManager = {
     loadColumns: async function (boardId) {
+        boardId = boardId
         const columns = await dataHandler.getColumnsByBoardId(boardId);
         for (let column of columns) {
             if (column.boardId == boardId) {
@@ -24,7 +25,7 @@ export let columnsManager = {
                 domManager.addEventListener(
                     `.delete-column`,
                     "click",
-                    () => deleteColumn(column.id));
+                    () => deleteColumn(column.id, boardId));
                 domManager.addEventListener(
                     `.column[column-id="${column.id}"]`,
                     "drop",
@@ -92,8 +93,9 @@ function deleteBoard (boardId) {
     apiPost(`/api/board/${boardId}/delete`, deleteBoardTemplate(boardId))
 }
 
-function deleteColumn (columnId) {
+function deleteColumn (columnId, boardId) {
     apiPost(`/api/column/${columnId}/delete`, deleteColumnTemplate(columnId))
+    columnsManager.loadColumns(boardId)
 }
 
 function test (){
@@ -105,6 +107,7 @@ function dropHandler(event) {
     const targetColumn = event.currentTarget;
     const targetColumnId = targetColumn.dataset.columnId;
     const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
+    console.log(cardElement)
     targetColumn.appendChild(cardElement);
     apiPost(`/api/cards/${cardId}/update-column`, { column_id: targetColumnId })
 }
