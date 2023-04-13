@@ -2,6 +2,7 @@ import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { apiPost } from "../data/dataHandler.js";
 import { createBoardTemplate} from "../data/dataTemplates.js";
+import { boardsManager } from "./boardsManager.js";
 
 
 export function createBoardButton () {
@@ -14,10 +15,8 @@ export function createBoardButton () {
         createBoardAction)
   }
 
-function createBoardAction() {
+async function createBoardAction() {
     let boardName = prompt("Enter board name.")
-    const boardBuilder = htmlFactory(htmlTemplates.board);
-    const content = boardBuilder(boardName);
-    domManager.addChild("#root", content);
-    apiPost("/api/createboard", createBoardTemplate(boardName))
+    await apiPost("/api/boards", createBoardTemplate(boardName))
+    boardsManager.loadBoards()
 }

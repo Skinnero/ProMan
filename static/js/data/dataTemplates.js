@@ -1,32 +1,31 @@
 export function createBoardTemplate(boardName) {
-    let newBoardJson = {"boardname": `${boardName}`}
-    return newBoardJson
+    return {"title": boardName}
 }
 
 export function editBoardTitleTemplate(boardTitle) {
-    let newNameJson = {"boardTitle": `${boardTitle}`}
+    let newNameJson = {"title": `${boardTitle}`}
     return newNameJson
 }
 
 export function editColumnTitleTemplate(columnTitle) {
-    let newNameJson = {"columnTitle": `${columnTitle}`}
+    let newNameJson = {"title": `${columnTitle}`}
     return newNameJson
 }
 
 export function editCardTitleTemplate(cardTitle) {
-    let newNameJson = {"cardTitle": `${cardTitle}`}
+    let newNameJson = {"title": `${cardTitle}`}
     return newNameJson
 }
 
-export function createCardTemplate(cardTitle, boardId) {
-    let newCartJson = {"cardTitle": `${cardTitle}`,
-                       "boardId": `${boardId}`}
+export function createCardTemplate(cardTitle, columnId) {
+    let newCartJson = {"title": `${cardTitle}`,
+                       "column_id": `${columnId}`}
     return newCartJson
 }
 
 export function createColumnTemplate(columnTitle, boardId) {
-    let newCartJson = {"columnTitle": `${columnTitle}`,
-                       "boardId": `${boardId}`}
+    let newCartJson = {"title": `${columnTitle}`,
+                       "board_id": `${boardId}`}
     return newCartJson
 }
 

@@ -26,10 +26,10 @@ def create_default_columns(data:dict):
     """    
     board_id = data['id']
     query = f"""
-    INSERT INTO columns(name, order_number, board_id) VALUES ('To do', 1, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Additional', 2, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Doing', 3, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Done', 4, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('To do', 1, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Additional', 2, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Doing', 3, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Done', 4, {board_id});
     """
     CURSOR.execute(query)
 
@@ -41,13 +41,14 @@ def get_all_by_board_id(board_id:str):
 
     Returns:
         list[RealDictRow]: list of columns with values
-    """    
+    """ 
+    print(board_id)   
     try:
         board_id = int(board_id)
         query = 'SELECT * FROM columns WHERE board_id = %s ORDER BY order_number'
         CURSOR.execute(query, [board_id])
-        if CURSOR.rowcount == 0:
-            raise ValueError
+        # if CURSOR.rowcount == 0:
+        #     raise ValueError
         return True, CURSOR.fetchall()
     except ValueError:
         return False, 'ValueError: Passed wrong value'
@@ -87,10 +88,11 @@ def add(board_id:str, data:dict):
     Returns:
         bool + str: true if successfull else false, finally feedback
     """    
+    print(board_id)
     try:
         board_id = int(board_id)
-        data = [data['name'], get_new_order_number(id), board_id]
-        query = 'INSERT INTO columns(name, order_number, board_id) VALUES (%s, %s, %s)'
+        data = [data['title'], get_new_order_number(board_id), board_id]
+        query = 'INSERT INTO columns(title, order_number, board_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Column created successfully'
     except (ForeignKeyViolation, InvalidTextRepresentation, ValueError):
@@ -109,8 +111,8 @@ def update_by_id(id:str, data:dict):
         bool + str: true if successfull else false, finally feedback
     """    
     def set_name(id:str, data:dict):    
-        data = [data['name'], id]
-        query = 'UPDATE columns SET name = %s WHERE id = %s'
+        data = [data['title'], id]
+        query = 'UPDATE columns SET title = %s WHERE id = %s'
         CURSOR.execute(query, data)
 
     def set_order_number(id:str, data:dict):
@@ -120,7 +122,7 @@ def update_by_id(id:str, data:dict):
 
     try:
         id = int(id)
-        if 'name' in data.keys():
+        if 'title' in data.keys():
             set_name(id, data)
         elif 'order_number' in data.keys():
             data['order_number'] = int(data['order_number'])
@@ -141,7 +143,7 @@ def get_new_order_number(board_id:int):
     Returns:
         int: len of columns + 1
     """    
-    return len(get_all_by_board_id(id)[1]) + 1
+    return len(get_all_by_board_id(board_id)[1]) + 1
 
 def segregate(data:list):
     """Takes list of data from json and updates every record

@@ -17,7 +17,7 @@ def manage_all_cards_from_column(column_id):
         str or json: json when methed GET else feedback, finally status code
     """    
     if request.method == 'GET':
-        result, data = cards.get_all_by_board_id_by_column_id(column_id)
+        result, data = cards.get_all_by_column_id(column_id)
         return (jsonify(data), 200) if result else (data, 404)
     
     elif request.method == 'POST':
