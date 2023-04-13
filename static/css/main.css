@@ -1,72 +1,120 @@
-body{
-    background-color:  rgb(214, 252, 214);
-    margin: 0;
+body {
+  background-color: rgb(214, 252, 214);
+  margin: 0;
 }
-#nav{
-    background-color: green;
-    width: 100%;
-    position: absolute;
-    z-index: 1;
-    border-bottom: 1px solid rgb(158, 158, 158);
-}
-#nav ul{
-    display: inline-flex;
-    list-style: none;
-    margin: 0;
-}
-#nav li button{
-    font-size: 32px;
-    border: none;
-    background-color: green;
-}
-#nav li button:hover{
-    color: white;
-    cursor: pointer;
-}
-.left-panel{
-    position: absolute;
-    background-color: green;
-    width: 20vh;
-    height: 100vh;
-}
-.left-panel textarea{
-    margin-top: 40px;
-}
-.left-panel button{
-    margin-top: 40px;
-    border: none;
-    background-color: inherit;
-    font-size: 26px;
-    cursor: pointer;
-}
-.board-title{
-    position: fixed;
-    width: 75%;
-    top: 10%;
-    left: 20%;
-    text-align: center;
-}
-.board{
-    white-space: nowrap;
-    position: fixed;
-    width: 75%;
-    top: 10%;
-    left: 20%;
-    overflow-x: auto;
+#nav {
+  background-color: rgb(118, 211, 118);
+  width: 100%;
+  border-bottom: 1px solid rgb(158, 158, 158);
 }
 
-.board .column{
-    background-color: aqua;
-    display: inline-flex;
-    flex-direction: column;
-    margin: 15%;
+#nav button {
+  font-size: 32px;
+  border: none;
+  background-color: rgb(118, 211, 118);
 }
-textarea{
-    border-radius: 2px;
-    resize: none;
+#nav button:hover {
+  color: rgb(166, 249, 159);
+  cursor: pointer;
+}
+#left-panel {
+  position: fixed;
+  background-color: green;
+  width: 20vh;
+  height: 100vh;
+}
+#left-panel button {
+  margin: 7px;
+  /* border: none; */
+  background-color: inherit;
+  font-size: 26px;
+  cursor: pointer;
+}
+textarea {
+  text-align: center;
+  resize: none;
+  height: 26px;
+  overflow: hidden;
+  width: 90%;
+  margin: auto;
+  font-size: 26px;
+  background-color: green;
+  border: none;
+}
+
+.board {
+  position: absolute;
+  width: 85%;
+  height: 93%;
+  top: 7%;
+  left: 15%;
+  white-space: nowrap;
+  overflow-x: auto;
+  /* border: 1px solid; */
+}
+
+.board .board-title textarea {
+  text-align: left;
+  background-color: inherit;
+  width: min-content;
+}
+.columns {
+  display: inline-flex;
+  flex-direction: column;
+}
+.columns textarea{
+    margin: 2px;
+  text-align: left;
+  width: min-content;
+}
+.button-column{
+  display: inline-flex;
+  flex-direction: column;
+  position: sticky;
+  cursor: pointer;
+  background-color: green;
+  font-size: 26px;
+  margin: auto;
+  border: none;
+}
+
+.columns button{
+    position: relative;
+    cursor: pointer;
+    background-color: green;
     font-size: 26px;
-    height: 28px;
-    overflow: hidden;
-    width: 166px;
     border: none;
+}
+.cards {
+    background-color: greenyellow;
+    text-align: center;
+    font-size: 18px;
+    margin: 2px;
+    border: 1px solid;
+}
+
+.cards button{
+    background-color: inherit;
+    font-size: inherit;
+}
+
+.delete-column{
+    position: absolute;
+    font-size: 26px;
+    margin-left: -30px;
+    background: none;
+    cursor: pointer;
+}
+.delete-card{
+    cursor: pointer;
+    position: absolute;
+    margin-left: -10px;
+    background: none;
+}
+
+.cards textarea{
+  background-color: inherit;
+  font-size: 16px;
+  height: 16px;
+  width: 90%;
 }

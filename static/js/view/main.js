@@ -1,7 +1,7 @@
-import { setBoardsButtons } from "./domManager.js";
+import * as domManager from "./domManager.js";
 
 function init(){
-    setBoardsButtons()
+    domManager.setBoardsButtons()
 }
 
 init()

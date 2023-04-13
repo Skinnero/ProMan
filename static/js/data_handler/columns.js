@@ -5,7 +5,11 @@ export async function getColumn(columnId){
 
 export async function getColumnsByBoardId(boardId){
     const res = await fetch(`/api/boards/${boardId}/columns`)
-    return await res.json()
+    if (res.ok){
+        return await res.json()
+    } else {
+        return false
+    }
 }
 
 export async function createColumn(boardId, data){

@@ -5,7 +5,11 @@ export async function getCard(cardId){
 
 export async function getCardsByColumnId(columnId){
     const res = await fetch(`/api/columns/${columnId}/cards`)
-    return await res.json()
+    if (res.ok){
+        return await res.json()
+    } else {
+        return false
+    }
 }
 
 export async function deleteCard(cardId){

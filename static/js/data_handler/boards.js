@@ -16,7 +16,7 @@ export async function createBoard(data){
     const res = await fetch('/api/boards', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body: JSON.stringify(data)
     })

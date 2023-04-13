@@ -1,16 +1,50 @@
-export function getBoardsList(board){
-    return `
-    <textarea data-id=${board.id}>${board.name}</textarea><button id="show" data-id=${board.id}>+</button>
-    <button id="delete" data-id=${board.id}>-</button>
-    `
+export function getDivForBoards(board){
+    const boardsDiv = document.createElement('div')
+    boardsDiv.className = 'board-management'
+    boardsDiv.appendChild(getShowBoardButton(board))
+    boardsDiv.appendChild(getDeleteBoardButton(board))
+    return boardsDiv
+}
+export function getShowBoardButton(board){
+    const showBoardButton = document.createElement('button')
+    showBoardButton.className = 'show-board'
+    showBoardButton.innerText = board.name
+    showBoardButton.dataset.id = board.id
+    return showBoardButton
+}
+export function getDeleteBoardButton(board){
+    const deleteBoardButton = document.createElement('button')
+    deleteBoardButton.className = 'delete-board'
+    deleteBoardButton.innerText = '-'
+    deleteBoardButton.dataset.id = board.id
+    return deleteBoardButton
 }
 
-export function getBoardsDiv(){
+export function getBoardOnMainPage(){
+    const mainBoardDiv = document.createElement('div')
+    mainBoardDiv.className = 'board'
+    return mainBoardDiv
+}
+
+export function getBoardTitle(board){
+    const boardTitleDiv = document.createElement('div')
+    const textareaTitle = document.createElement('textarea')
+    boardTitleDiv.className = 'board-title'
+    textareaTitle.dataset.id = board.id
+    textareaTitle.value = board.name
+    boardTitleDiv.appendChild(textareaTitle)
+    return boardTitleDiv
+}
+
+export function getLeftPanel(){
     let boardDiv = document.createElement('div')
-    let createBoardButton = document.createElement('button')
-    createBoardButton.id = 'create'
-    createBoardButton.innerText = 'Create Board'
-    boardDiv.appendChild(createBoardButton)
-    boardDiv.className = 'left-panel'
+    boardDiv.id = 'left-panel'
     return boardDiv
+}
+
+export function getCreateBoardButton(){
+    let createBoardButton = document.createElement('button')
+    createBoardButton.id = 'create-board'
+    createBoardButton.innerText = 'Create Board'
+    return createBoardButton
 }

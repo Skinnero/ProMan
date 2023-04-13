@@ -27,7 +27,7 @@ def get_by_column_id(id:str):
     """    
     try:
         column_id = int(id)
-        query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived'
+        query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived ORDER BY order_number'
         CURSOR.execute(query, [column_id])
         if CURSOR.rowcount == 0:
                 raise ValueError
@@ -63,14 +63,13 @@ def delete_by_id(id:str):
     Returns:
         bool: true if succesful otherwise false
     """    
+    # TODO: Order Number of first record
     try:
         id = int(id)
         card_data = get_one_by_id(id)
         query = 'DELETE FROM cards where id = %s'
         CURSOR.execute(query, [id])
         sort_out(card_data['column_id'], card_data['order_number'])
-        if CURSOR.rowcount == 0:
-            raise ValueError
         return True, 'Card deleted successfully'
     except ValueError:
         return False, 'ValueError: Passed wrong value'
@@ -105,6 +104,7 @@ def update_by_id(id:str, data:dict):
         data = [data['archived'], id]
         query = 'UPDATE cards SET archived = %s WHERE id = %s'
         CURSOR.execute(query, data)
+        
     try:
         id = int(id)
         if 'message' in data.keys():

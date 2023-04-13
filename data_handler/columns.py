@@ -1,6 +1,5 @@
 from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-# TODO: order number on deletion
 def get_one_by_id(id:str):
     """Get column by it's id
 
