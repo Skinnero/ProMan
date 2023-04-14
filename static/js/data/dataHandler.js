@@ -1,5 +1,3 @@
-import { boards, cards, columns } from "./mock.js";
-
 export let dataHandler = {
     getBoards: async function () {
         return await apiGet(`/api/boards`)

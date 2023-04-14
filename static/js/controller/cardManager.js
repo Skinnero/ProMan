@@ -27,15 +27,14 @@ export let cardsManager = {
                 const cardElement = document.querySelector(`.card[data-card-id="${card.id}"]`);
                 cardElement.draggable = true;
                 cardElement.addEventListener("dragstart", dragStartHandler);
-                cardElement.addEventListener("dragend", dragEndHandler);
-                
+                cardElement.addEventListener("dragend", dragEndHandler);  
             }
         }
-
-    },
-};
+    }
+}
 
 function editCardTitle (clickEvent) {
+    console.log('xD');
     const cardTitle = clickEvent.target;
     const input = document.createElement("input")
     let cardId = clickEvent.target.dataset.id
@@ -49,11 +48,7 @@ function editCardTitle (clickEvent) {
             cardTitle.innerText = newTitle;
             apiPatch(`/api/cards/${cardId}`, editCardTitleTemplate(newTitle))
         }}
-    );
-}
-
-function test () {
-    console.log('asdf')
+    )
 }
 
 function dragStartHandler(event) {
@@ -66,7 +61,8 @@ function dragEndHandler(event) {
     cardElement.removeEventListener("dragstart", dragStartHandler);
     cardElement.removeEventListener("dragend", dragEndHandler);
 }
-function deleteCard(cardId, columnId, boardId) {
-    apiDelete(`/api/cards/${cardId}`)
+
+async function deleteCard(cardId, columnId, boardId) {
+    await apiDelete(`/api/cards/${cardId}`)
     boardsManager.loadBoards(boardId)
 }

@@ -28,7 +28,6 @@ def get_all_by_column_id(column_id:str):
     """    
     try:
         column_id = int(column_id)
-        print(column_id)
         query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived'
         CURSOR.execute(query, [column_id])
         # if CURSOR.rowcount == 0:
