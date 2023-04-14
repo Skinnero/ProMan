@@ -59,13 +59,15 @@ button {
     margin-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    box-shadow: 4px 4px rgba(0, 0, 0, 0.395);
+    box-shadow: 4px 4px rgba(0, 0, 0, 0.16);
     background-color: rgb(81, 218, 181);
     border: none;
     border-radius: 10px;
 }
 button:hover {
     cursor: pointer;
+    background-color: rgb(6, 232, 138);
+    box-shadow: 4px 4px rgba(0, 0, 0, 0.395);
   }
 
 h4 {
