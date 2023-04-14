@@ -4,7 +4,6 @@ import { apiPost } from "../data/dataHandler.js";
 import { createBoardTemplate} from "../data/dataTemplates.js";
 import { boardsManager } from "./boardsManager.js";
 
-
 export function createBoardButton () {
     const buttonBuilder = htmlFactory(htmlTemplates.newBoardButton);
     const content = buttonBuilder();

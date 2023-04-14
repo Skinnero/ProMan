@@ -1,7 +1,6 @@
 from data_manager.db_connection import CURSOR
 from data_manager.columns import create_default_columns
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-import time
 
 def get_one(id:str):
     """Get board by it's id
@@ -67,7 +66,6 @@ def add(data:dict):
         query = 'SELECT * FROM boards ORDER BY id DESC'
         CURSOR.execute(query)
         return CURSOR.fetchone() 
-    print(data)
     try:
         data = [data['title']]
         query = 'INSERT INTO boards(title) VALUES (%s)'

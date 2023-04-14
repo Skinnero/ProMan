@@ -1,4 +1,4 @@
-import {dataHandler,apiPost, apiPatch} from "../data/dataHandler.js";
+import {dataHandler, apiPatch} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import {columnsManager} from "./columnsManager.js";
@@ -10,7 +10,6 @@ export let boardsManager = {
         const boards = await dataHandler.getBoards();
         for (let board of boards) {
             if (boardId && boardId == board.id) {
-                console.log('I am here')
                 document.getElementsByClassName('board')[boards.indexOf(board)].innerHTML = `<h3 data-board-id=${board.id}>${board.title}</h3>`
                 await columnsManager.loadColumns(boardId)
                 return
@@ -28,15 +27,15 @@ export let boardsManager = {
                 `.toggle-board-button[data-board-id="${board.id}"]`,
                 "click",
                 showHideButtonHandler
-            );
+            )
             domManager.addEventListener(
                 `h3[data-id="${board.id}"]`,
                 "click",
                 editBoardTitle
-            );
+            )
         }
-    },
-};
+    }
+}
 
 function showHideButtonHandler(clickEvent) {
     const boardId = clickEvent.target.dataset.boardId;
@@ -57,5 +56,5 @@ function editBoardTitle (clickEvent) {
           boardTitle.innerText = newTitle;
           apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
         }}
-    );
+    )
 }

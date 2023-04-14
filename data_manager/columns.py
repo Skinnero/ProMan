@@ -41,8 +41,7 @@ def get_all_by_board_id(board_id:str):
 
     Returns:
         list[RealDictRow]: list of columns with values
-    """ 
-    print(board_id)   
+    """  
     try:
         board_id = int(board_id)
         query = 'SELECT * FROM columns WHERE board_id = %s ORDER BY order_number'
@@ -88,7 +87,6 @@ def add(board_id:str, data:dict):
     Returns:
         bool + str: true if successfull else false, finally feedback
     """    
-    print(board_id)
     try:
         board_id = int(board_id)
         data = [data['title'], get_new_order_number(board_id), board_id]

@@ -2,14 +2,12 @@ import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js"
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager } from "./cardManager.js";
-import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate,
-        deleteBoardTemplate, deleteColumnTemplate } from "../data/dataTemplates.js";
+import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate,} from "../data/dataTemplates.js";
 import { boardsManager } from "./boardsManager.js";
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
         const columns = await dataHandler.getColumnsByBoardId(boardId);
-        console.log(columns)
         for (let column of columns) {
             if (column.board_id == boardId) {
                 const cardBuilder = htmlFactory(htmlTemplates.column);
@@ -19,7 +17,7 @@ export let columnsManager = {
                     `h4[data-id="${column.id}"]`,
                     "click",
                     editColumnTitle);
-                cardsManager.loadCards(column.id, boardId);
+                await cardsManager.loadCards(column.id, boardId);
                 const columnDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteColumn)
                 content = columnDeleteButtonBuilder(column.id);
                 domManager.addChild(`.column[data-id="${column.id}"`, content);
@@ -60,17 +58,13 @@ export let columnsManager = {
             `.delete-board`,
             "click",
             () => deleteBoard(boardId));
-    },
-};
-
-function deleteButtonHandler(clickEvent) {
+    }
 }
 
 function editColumnTitle (clickEvent) {
     const boardTitle = clickEvent.target;
     const input = document.createElement("input")
     const columnId = clickEvent.target.dataset.id
-    console.log(columnId)
     input.value = boardTitle.innerText;
     boardTitle.replaceWith(input);
     input.addEventListener("keydown", function(event) {
@@ -80,7 +74,7 @@ function editColumnTitle (clickEvent) {
           boardTitle.innerText = newTitle;
           apiPatch(`/api/columns/${columnId}`, editColumnTitleTemplate(newTitle))
         }}
-    );
+    )
 }
 
 async function createNewCard (boardId, columnId) {
@@ -103,16 +97,12 @@ async function deleteColumn (columnId, boardId) {
     boardsManager.loadBoards(boardId)
 }
 
-function test (){
-    console.log('asdf')
-}
 function dropHandler(event) {
     event.preventDefault();
     const cardId = event.dataTransfer.getData("text/plain");
     const targetColumn = event.currentTarget;
     const targetColumnId = targetColumn.dataset.columnId;
     const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
-    console.log(cardElement)
     targetColumn.appendChild(cardElement);
     apiPost(`/api/cards/${cardId}/update-column`, { column_id: targetColumnId })
 }
