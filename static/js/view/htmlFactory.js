@@ -37,21 +37,21 @@ export function htmlFactory(template) {
 function boardBuilder(board) {
     return `<div class="board-container">
                 <div class="board" data-board-id=${board.id}>
-                <h3 data-board-id=${board.id}>${board.title}</h3>
+                <h3 data-id=${board.id}>${board.title}</h3>
                 </div>
                 <button class="toggle-board-button" data-board-id="${board.id}">Show Cards</button>
             </div>`;
 }
 
 function columnBuilder(column) {
-    return `<div class="column" column-id="${column.id}">
-    <h4 column-id=${column.id}>${column.title}</h4>
+    return `<div class="column" data-id="${column.id}">
+    <h4 data-id=${column.id}>${column.title}</h4>
     </div>`;
 }
 
 function cardBuilder(card) {
     return `<div class="card" data-card-id="${card.id}" >
-    <h4 data-card-id="${card.id}">${card.title}</h4
+    <h4 data-id="${card.id}">${card.title}</h4
     </div>`;
 }
 
@@ -59,8 +59,8 @@ function buttonBuilder() {
     return `<button class="create-board-button">Create Board</button>`;
   }
 
-function cardButtonBuilder() {
-    return `<br><button class="create-new-card">Create new card</button>`;
+function cardButtonBuilder(columnId) {
+    return `<br><button class="create-new-card" column-id="${columnId}">Create new card</button>`;
 }
 
 function columnButtonBuilder() {
@@ -71,10 +71,10 @@ function boardDeleteButtonBuilder() {
     return `<br><button class="delete-board">Delete board</button>`;
 }
 
-function columnDeleteButtonBuilder() {
-    return `<br><button class="delete-column">Delete column</button>`;
+function columnDeleteButtonBuilder(columnId) {
+    return `<br><button class="delete-column" column-id="${columnId}">Delete column</button>`;
 }
 
-function cardDeleteButtonBuilder() {
-    return `<br><button class="delete-card">Delete card</button>`;
+function cardDeleteButtonBuilder(cardId) {
+    return `<br><button class="delete-card" card-id="${cardId}">Delete card</button>`;
 }

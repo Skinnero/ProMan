@@ -27,11 +27,12 @@ def get_all_by_column_id(column_id:str):
         list[RealDictRow]: list of cards values
     """    
     try:
-        column_id = int(id)
+        column_id = int(column_id)
+        print(column_id)
         query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived'
         CURSOR.execute(query, [column_id])
-        if CURSOR.rowcount == 0:
-                raise ValueError
+        # if CURSOR.rowcount == 0:
+        #         raise ValueError
         return True, CURSOR.fetchall()
     except ValueError:
         return False, 'ValueError: Passed wrong value'
@@ -50,8 +51,8 @@ def add(column_id:str, data:dict):
     """
     try:
         column_id = int(column_id)
-        data = [data['message'], get_new_order_number(column_id), column_id]
-        query = 'INSERT INTO cards(message, order_number, column_id) VALUES (%s, %s, %s)'
+        data = [data['title'], get_new_order_number(column_id), column_id]
+        query = 'INSERT INTO cards(title, order_number, column_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Card created successfully'
     except (ForeignKeyViolation, InvalidTextRepresentation):
@@ -98,8 +99,8 @@ def update_by_id(id:str, data:dict):
         CURSOR.execute(query, data)
         
     def set_message(id:str, data:dict):
-        data = [data['message'], id]
-        query = 'UPDATE cards SET message = %s WHERE id = %s'
+        data = [data['title'], id]
+        query = 'UPDATE cards SET title = %s WHERE id = %s'
         CURSOR.execute(query, data)
         
     def set_order_number(id:str, data:dict):
@@ -113,7 +114,7 @@ def update_by_id(id:str, data:dict):
         CURSOR.execute(query, data)
     try:
         id = int(id)
-        if 'message' in data.keys():
+        if 'title' in data.keys():
             set_message(id, data)
         elif 'order_number' in data.keys():
             data['order_number'] = int(data['order_number'])
@@ -138,7 +139,7 @@ def get_new_order_number(column_id:int):
     Returns:
         int: len of columns + 1
     """    
-    return len(get_all_by_column_id(id)[1]) + 1
+    return len(get_all_by_column_id(column_id)[1]) + 1
 
 def segregate(data:list):
     """Takes list of data from json and updates every record

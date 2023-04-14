@@ -1,6 +1,7 @@
 from data_manager.db_connection import CURSOR
 from data_manager.columns import create_default_columns
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
+import time
 
 def get_one(id:str):
     """Get board by it's id
@@ -25,6 +26,7 @@ def get_all():
     Returns:
         list[RealDictRow]: list of dicts with boards values
     """    
+    # time.sleep(0.2)
     query = 'SELECT * FROM boards ORDER BY id'
     CURSOR.execute(query)
     return CURSOR.fetchall()
@@ -65,10 +67,10 @@ def add(data:dict):
         query = 'SELECT * FROM boards ORDER BY id DESC'
         CURSOR.execute(query)
         return CURSOR.fetchone() 
-    
+    print(data)
     try:
-        data = [data['name'], data['user_id']]
-        query = 'INSERT INTO boards(name, user_id) VALUES (%s, %s)'
+        data = [data['title']]
+        query = 'INSERT INTO boards(title) VALUES (%s)'
         CURSOR.execute(query, data)
         create_default_columns(get_most_recent_added())
         return 'Board Created'
@@ -96,12 +98,12 @@ def update_by_id(id:str, data:dict):
         CURSOR.execute(query, data)
 
     def set_name(id:str, data:dict):
-        data = [data['name'], id]
-        query = 'UPDATE boards SET name = %s WHERE id = %s'
+        data = [data['title'], id]
+        query = 'UPDATE boards SET title = %s WHERE id = %s'
         CURSOR.execute(query, data)
     try:
         id = int(id)
-        if 'name' in data.keys():
+        if 'title' in data.keys():
             set_name(id, data)
         elif 'private' in data.keys():
             set_private(id, data)

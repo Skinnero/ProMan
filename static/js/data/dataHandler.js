@@ -2,7 +2,7 @@ import { boards, cards, columns } from "./mock.js";
 
 export let dataHandler = {
     getBoards: async function () {
-        return boards;
+        return await apiGet(`/api/boards`)
     },
     getBoard: async function (boardId) {
         // the board is retrieved and then the callback function is called with the board
@@ -15,10 +15,10 @@ export let dataHandler = {
         // the status is retrieved and then the callback function is called with the status
     },
     getColumnsByBoardId: async function (boardId) {
-        return columns;
+        return await apiGet(`/api/boards/${boardId}/columns`)
     },
-    getCardsByBoardId: async function (boardId) {
-        return cards;
+    getCardsByBoardId: async function (columnId) {
+        return await apiGet(`/api/columns/${columnId}/cards`)
     },
     getCard: async function (cardId) {
         // the card is retrieved and then the callback function is called with the card
@@ -41,13 +41,28 @@ async function apiGet(url) {
 }
 
 export async function apiPost(url, payload) {
+    await fetch(url, {
+        method:'POST', 
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(payload)
+    })
 }
 
-async function apiDelete(url) {
+export async function apiDelete(url) {
+    await fetch(url, {method:'DELETE'})
 }
 
 async function apiPut(url) {
 }
 
-async function apiPatch(url) {
+export async function apiPatch(url, payload) {
+    await fetch(url, {
+        method:'PATCH', 
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify(payload)
+    })
 }

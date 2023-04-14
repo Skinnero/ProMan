@@ -17,6 +17,8 @@ body {
     box-shadow: 4px 4px rgba(0, 0, 0, 0.395);
     height: auto;
     width: 80%;
+    white-space: nowrap;
+    overflow-x: auto;
 }
 
 .card {
@@ -32,9 +34,6 @@ body {
     background: rgb(0,143,39);
     background: linear-gradient(36deg, rgba(0,143,39,1) 0%, rgba(64,242,88,1) 60%, rgba(32,189,106,1) 100%);
 }
-.card:hover {
-    cursor: pointer;
-}
 
 .column {
     border: 1px solid black;
@@ -44,12 +43,14 @@ body {
     margin-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
-    display: inline-block;
+    display: inline-flex;
+    flex-direction: column;
     width: 23%;
     height: auto;
     min-height: 200px;
     background: rgb(147,171,204);
     background: linear-gradient(242deg, rgba(147,171,204,1) 0%, rgba(123,164,203,1) 60%, rgba(128,166,204,1) 100%);
+    position: relative;
 }
 
 button {
