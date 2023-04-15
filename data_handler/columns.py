@@ -1,146 +1,150 @@
 from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-def get_one_by_id(id:str):
-    """Get column by it's id
+
+
+def get_one_by_id(column_id: int):
+    """Get column by its id
 
     Args:
-        id (str): column id
+        column_id (int): column id
     Returns:
-        dict: column values
-    """    
-    try:
-        id = int(id)
-        query = 'SELECT * FROM columns WHERE id = %s'
-        CURSOR.execute(query, [id])
-        return CURSOR.fetchone()
-    except ValueError:
-        return False
+        RealDictRow: column values
+    """
+    query = 'SELECT * FROM columns WHERE id = %s'
+    CURSOR.execute(query, [column_id])
+    return CURSOR.fetchone()
 
-def create_default_columns(data:dict):
-    """Creates default caolumns for new board
+
+def create_default_columns(column_data: dict):
+    """Creates default columns for new board
 
     Args:
-        data (dict): board id
-    """    
-    board_id = data['id']
+        column_data (dict): board id
+    """
+    board_id = column_data['id']
     query = f"""
-    INSERT INTO columns(name, order_number, board_id) VALUES ('To do', 1, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Additional', 2, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Doing', 3, {board_id});
-    INSERT INTO columns(name, order_number, board_id) VALUES ('Done', 4, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('To do', 1, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Additional', 2, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Doing', 3, {board_id});
+    INSERT INTO columns(title, order_number, board_id) VALUES ('Done', 4, {board_id});
     """
     CURSOR.execute(query)
 
-def get_by_board_id(id:str):
+
+def get_by_board_id(board_id: int):
     """Return all columns that belongs to the board
 
     Args:
-        id (str): columns id
+        board_id (int): columns id
 
     Returns:
-        list: list of columns value
-    """    
-    try:
-        board_id = int(id)
-        query = 'SELECT * FROM columns WHERE board_id = %s ORDER BY order_number'
-        CURSOR.execute(query, [board_id])
-        if CURSOR.rowcount == 0:
-            raise ValueError
-        return True, CURSOR.fetchall()
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
-    except KeyError:
-        return False,'KeyError: Passed wrong key'
-    
-def delete_by_id(id:str):
+        List[RealDictRow]: list of columns value
+    """
+    query = 'SELECT * FROM columns WHERE board_id = %s ORDER BY order_number'
+    CURSOR.execute(query, [board_id])
+    return True, CURSOR.fetchall()
+
+
+def delete_by_id(column_id: int):
     """Deletes column by id
 
     Args:
-        id (str): str with columns's id
+        column_id (int): str with columns id
 
     Returns:
-        bool: true if succesful otherwise false
-    """    
-    try:
-        id = int(id)
-        column_data = get_one_by_id(id)
-        query = 'DELETE FROM columns where id = %s'
-        CURSOR.execute(query, [id])
-        sort_out(column_data['board_id'], column_data['order_number'])
-        if CURSOR.rowcount == 0:
-            raise ValueError
-        return True, 'Column deleted successfully'
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
-    except KeyError:
-        return False,'KeyError: Passed wrong key'
-    
-def add(id:str, data:str):
+        bool: true if successful otherwise false
+    """
+    column_data = get_one_by_id(column_id)
+    query = 'DELETE FROM columns where id = %s'
+    CURSOR.execute(query, [column_id])
+    sort_out(column_data['board_id'], column_data['order_number'])
+    return True, 'Column deleted successfully'
+
+
+def add(board_id: int, column_data: dict):
     """Inserts new column into the table
 
     Args:
-        id (str): str with board_id
+        board_id (int): int with board_id
+        column_data (dict): new colum values
+
     """
     try:
-        id = int(id)
-        data = [data['name'], get_new_order_number(id), id]
-        query = 'INSERT INTO columns(name, order_number, board_id) VALUES (%s, %s, %s)'
+        data = [column_data['title'], get_new_order_number(board_id), board_id]
+        query = 'INSERT INTO columns(title, order_number, board_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Column created successfully'
-    except (ForeignKeyViolation, InvalidTextRepresentation, ValueError):
+    except (ForeignKeyViolation, InvalidTextRepresentation):
         return False, 'InvalidTextRepresentation or ForeignKeyViolation: Passed wrong value'
     except KeyError:
-        return False,'KeyError: Passed wrong key'
+        return False, 'KeyError: Passed wrong key'
 
-def update_by_id(id:str, data:dict):
-    """Updates columns by it's id
+
+def update_by_id(column_id: int, column_data: dict):
+    """Updates columns by its id
 
     Args:
-        data (dict): dict with key 'id'
+        column_id (int): column id
+        column_data (dict): dict with key 'id'
 
     Returns:
-        bool: true if succesful otherwise false
+        bool: true if successful otherwise false
     """
-    def set_name(id:str, data:dict):
-        data = [data['name'], id]
-        query = 'UPDATE columns SET name = %s WHERE id = %s'
+    def set_name(column_id: int, column_data: dict):
+        data = [column_data['title'], column_id]
+        query = 'UPDATE columns SET title = %s WHERE id = %s'
         CURSOR.execute(query, data)
 
-    def set_order_number(id:str, data:dict):
-        data = [data['order_number'], id]
+    def set_order_number(column_id: int, column_data: dict):
+        data = [column_data['order_number'], column_id]
         query = 'UPDATE columns SET order_number = %s WHERE id = %s'
         CURSOR.execute(query, data)
 
-    try:
-        id = int(id)
-        if 'name' in data.keys():
-            set_name(id, data)
-        elif 'order_number' in data.keys():
-            data['order_number'] = int(data['order_number'])
-            set_order_number(id, data)
-        else:
-            return False,'KeyError: Passed wrong key' 
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
+    if 'title' in column_data.keys():
+        set_name(column_id, column_data)
+    elif 'order_number' in column_data.keys():
+        set_order_number(column_id, column_data)
+    else:
+        return False, 'KeyError: Passed wrong key'
     return True, 'Column updated successfully'
 
-    
 
-def get_new_order_number(id:int):
-    
-    return len(get_by_board_id(id)[1]) + 1
+def get_new_order_number(board_id: int):
+    """Gets new number when adding a column
 
-def segregate(data:list):
-    
-    for record in data:
+    Args:
+        board_id (int): column id
+
+    Returns:
+        int: new number for ordering
+    """
+    len_of_columns = len(get_by_board_id(board_id)[1])
+    return len_of_columns + 1 if type(len_of_columns) is list else 1
+
+
+def segregate(column_data: list):
+    """Takes a list of data and updates them
+
+    Args:
+        column_data (list): list of cards values
+
+    Returns:
+        bool: true if successful otherwise false
+    """
+    for record in column_data:
         result, message = update_by_id(record['id'], record)
         if not result:
             return False, message
+    return True, 'Columns updated successfully'
 
-    return True, message
 
+def sort_out(board_id: int, order_number: int):
+    """Sorts cards on deletion
 
-def sort_out(board_id:int, order_number:int):
+    Args:
+        board_id (int): column id
+        order_number (int): of deleted card
+    """
     data = [board_id, order_number]
     query = '''
     UPDATE columns SET order_number = order_number - 1 

@@ -13,14 +13,13 @@ export async function getColumnsByBoardId(boardId){
 }
 
 export async function createColumn(boardId, data){
-    const res = await fetch(`/api/boards/${boardId}/columns`,{
+    return await fetch(`/api/boards/${boardId}/columns`,{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }
 
 export async function deleteColumn(columnId){
@@ -28,23 +27,21 @@ export async function deleteColumn(columnId){
 }
 
 export async function updateColumn(columnId, data){
-    const res = await fetch(`/api/columns/${columnId}`, {
+    return await fetch(`/api/columns/${columnId}`, {
         method: 'PATCH',
         headers:{
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }
 
 export async function updateColumns(boardId, data){
-    const res = await fetch(`/api/boards/${boardId}/columns`, {
+    return await fetch(`/api/boards/${boardId}/columns`, {
         method: 'PATCH',
         headers:{
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }

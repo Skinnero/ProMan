@@ -1,6 +1,7 @@
 export function getCardDiv(card){
     const cardDiv = document.createElement('div')
     cardDiv.className = 'cards'
+    cardDiv.draggable = true
     cardDiv.appendChild(getCardTextarea(card))
     cardDiv.appendChild(getCardDeleteSpan(card))
     return cardDiv

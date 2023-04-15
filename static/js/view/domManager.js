@@ -28,7 +28,8 @@ export async function setBoardsButtons(){
                 e.preventDefault()
                 boardsHandler.updateBoard(boardOnMainPage.id , data)
                 boardsManager.changeBoardTitleOnLeftPanel(boardOnMainPage.id, data)
-            } else if (e.type == 'blur'){
+                e.target.blur()
+            } else if (e.type === 'blur'){
                 boardsHandler.updateBoard(boardOnMainPage.id , data)
                 boardsManager.changeBoardTitleOnLeftPanel(boardOnMainPage.id, data)
             }
@@ -42,7 +43,7 @@ export async function setBoardsButtons(){
         const createBoardButton = document.getElementById('create-board')
         createBoardButton.addEventListener('click', async ()=>{
             await boardsHandler.createBoard(newBoard)
-            setBoardsButtons()
+            await setBoardsButtons()
         })
     }
 
@@ -53,9 +54,9 @@ export async function setBoardsButtons(){
             boardsManager.setBoardOnMainPage(boardOnMainPage)
             await columnsManager.setColumns(boardOnMainPage)
             await cardsManager.setCardsOnColumns()
-            setBoardsButtons()
+            await setBoardsButtons()
             setEditBoardTitle()
-            setColmunsDom(boardOnMainPage)
+            setColumnsDom(boardOnMainPage)
             showButtons.forEach(button => {
                 button.removeEventListener('click', clickHandler)
             })
@@ -69,8 +70,8 @@ export async function setBoardsButtons(){
     setCreateBoardButton()
 }
 
-function setColmunsDom(board){
-    async function editTitle(){
+function setColumnsDom(board){
+    function editTitle(){
         const columns = document.querySelectorAll('.column-title textarea')
         const editEventHandler = (e) => {
             const columnId = e.target.dataset.id
@@ -78,8 +79,8 @@ function setColmunsDom(board){
             if (e.keyCode === 13){
                 e.preventDefault()
                 columnsHandler.updateColumn(columnId, data)
-
-            } else if (e.type == 'blur'){
+                e.target.blur()
+            } else if (e.type === 'blur'){
                 columnsHandler.updateColumn(columnId, data)
             }
         }
@@ -89,7 +90,7 @@ function setColmunsDom(board){
         })
     }
     function createColumn(){
-        // TODO: Add to element instead of reseting EVERYWHERE
+        // TODO: Add to element instead of reset EVERYWHERE
         const createButton = document.getElementsByClassName('create-column')[0]
         const data = {name: "NEW"}
         createButton.addEventListener('click', async () => {
@@ -97,7 +98,7 @@ function setColmunsDom(board){
             boardsManager.setBoardOnMainPage(board)
             await columnsManager.setColumns(board)
             await cardsManager.setCardsOnColumns()
-            setColmunsDom(board)
+            setColumnsDom(board)
         })
     }
     function deleteColumn(){
@@ -108,7 +109,7 @@ function setColmunsDom(board){
                 boardsManager.setBoardOnMainPage(board)
                 await columnsManager.setColumns(board)
                 await cardsManager.setCardsOnColumns()
-                setColmunsDom(board)
+                setColumnsDom(board)
             })
         }
     }
@@ -128,7 +129,7 @@ function setCardsDom(board){
                 boardsManager.setBoardOnMainPage(board)
                 await columnsManager.setColumns(board)
                 await cardsManager.setCardsOnColumns()
-                setColmunsDom(board)
+                setColumnsDom(board)
             })
         }
     }
@@ -140,7 +141,7 @@ function setCardsDom(board){
                 boardsManager.setBoardOnMainPage(board)
                 await columnsManager.setColumns(board)
                 await cardsManager.setCardsOnColumns()
-                setColmunsDom(board)
+                setColumnsDom(board)
             })
         }
     }
@@ -152,8 +153,8 @@ function setCardsDom(board){
             if (e.keyCode === 13){
                 e.preventDefault()
                 cardsHandler.updateCard(cardId, data)
-
-            } else if (e.type == 'blur'){
+                e.target.blur()
+            } else if (e.type === 'blur'){
                 cardsHandler.updateCard(cardId, data)
             }
         }
@@ -167,4 +168,8 @@ function setCardsDom(board){
     deleteCard()
     createCard()
     editCard()
+}
+
+function setUsersDom(){
+
 }

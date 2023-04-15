@@ -1,138 +1,151 @@
 from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-def get_one_by_id(id:str):
-    """Get card by it's id
+
+
+def get_one_by_id(card_id: int):
+    """Get card by its id
 
     Args:
-        id (str): card id
+        card_id (int): card id
     Returns:
-        dict: card values
-    """    
-    try:
-        id = int(id)
-        query = 'SELECT * FROM cards WHERE id = %s'
-        CURSOR.execute(query, [id])
-        return CURSOR.fetchone()
-    except ValueError:
-        return False
+        RealDictRow: card values
+    """
+    query = 'SELECT * FROM cards WHERE id = %s'
+    CURSOR.execute(query, [card_id])
+    return CURSOR.fetchone()
 
-def get_by_column_id(id:str):
+
+def get_by_column_id(column_id: int):
     """Return all cards that belongs to the board
 
     Args:
-        id (str): card id
+        column_id (int): card id
 
     Returns:
-        list: list of cards value
-    """    
-    try:
-        column_id = int(id)
-        query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived ORDER BY order_number'
-        CURSOR.execute(query, [column_id])
-        if CURSOR.rowcount == 0:
-                raise ValueError
-        return True, CURSOR.fetchall()
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
-    except KeyError:
-        return False,'KeyError: Passed wrong key'
+        List[RealDictRow]: list of cards value
+    """
+    query = 'SELECT * FROM cards WHERE column_id = %s AND NOT archived ORDER BY order_number'
+    CURSOR.execute(query, [column_id])
+    return True, CURSOR.fetchall()
 
-def add(id:str, data:dict):
+
+def add(column_id: int, card_data: dict):
     """Inserts new card into the table
 
     Args:
-        data (dict): dict with key 'name' and 'column_id'
+        column_id (int): column id
+        card_data (dict): dict with key 'name' and 'column_id'
     """
     try:
-        id = int(id)
-        data = [data['message'], get_new_order_number(id), id]
-        query = 'INSERT INTO cards(message, order_number, column_id) VALUES (%s, %s, %s)'
+        data = [card_data['title'], get_new_order_number(column_id), column_id]
+        query = 'INSERT INTO cards(title, order_number, column_id) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Card created successfully'
     except (ForeignKeyViolation, InvalidTextRepresentation):
         return False, 'InvalidTextRepresentation or ForeignKeyViolation: Passed wrong value'
     except KeyError:
-        return False,'KeyError: Passed wrong key'
-    
-def delete_by_id(id:str):
+        return False, 'KeyError: Passed wrong key'
+
+
+def delete_by_id(card_id: int):
     """Deletes card by id
 
     Args:
-        data (dict): dict with card's id
+        card_id (int): column id
 
     Returns:
-        bool: true if succesful otherwise false
+        bool: true if successful otherwise false
     """    
     # TODO: Order Number of first record
     try:
-        id = int(id)
-        card_data = get_one_by_id(id)
+        card_data = get_one_by_id(card_id)
         query = 'DELETE FROM cards where id = %s'
-        CURSOR.execute(query, [id])
+        CURSOR.execute(query, [card_id])
         sort_out(card_data['column_id'], card_data['order_number'])
         return True, 'Card deleted successfully'
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
     except KeyError:
-        return False,'KeyError: Passed wrong key'
+        return False, 'KeyError: Passed wrong key'
 
-def update_by_id(id:str, data:dict):
-    """Updates cards by it's id
+
+def update_by_id(card_id: int, card_data: dict):
+    """Updates cards by its id
 
     Args:
-        data (dict): dict with key 'id'
+        card_id (int): column id
+        card_data (dict): dict with key 'id'
 
     Returns:
-        bool: true if succesful otherwise false
+        bool: true if successful otherwise false
     """
-    def set_completed(id:str, data:dict):
-        data = [data['completed'], id]
+    def set_completed(card_id: int, card_data: dict):
+        data = [card_data['completed'], card_id]
         query = 'UPDATE cards SET completed = %s WHERE id = %s'
         CURSOR.execute(query, data)
         
-    def set_message(id:str, data:dict):
-        data = [data['message'], id]
-        query = 'UPDATE cards SET message = %s WHERE id = %s'
+    def set_message(card_id: int, card_data: dict):
+        data = [card_data['title'], card_id]
+        query = 'UPDATE cards SET title = %s WHERE id = %s'
         CURSOR.execute(query, data)
         
-    def set_order_number(id:str, data:dict):
-        data = [data['order_number'], id]
+    def set_order_number(card_id: int, card_data: dict):
+        data = [card_data['order_number'], card_id]
         query = 'UPDATE cards SET order_number = %s WHERE id = %s'
         CURSOR.execute(query, data)
 
-    def set_archived(id:str, data:dict):
-        data = [data['archived'], id]
+    def set_archived(card_id: int, card_data: dict):
+        data = [card_data['archived'], card_id]
         query = 'UPDATE cards SET archived = %s WHERE id = %s'
         CURSOR.execute(query, data)
-        
-    try:
-        id = int(id)
-        if 'message' in data.keys():
-            set_message(id, data)
-        elif 'order_number' in data.keys():
-            data['order_number'] = int(data['order_number'])
-            set_order_number(id, data)
-        elif 'completed' in data.keys():
-            set_completed(id, data)
-        elif 'archived' in data.keys():
-            set_archived(id, data)
-        else:
-            return False,'KeyError: Passed wrong key'
-    except ValueError:
-        return False, 'ValueError: Passed wrong value'
+
+    if 'title' in card_data.keys():
+        set_message(card_id, card_data)
+    elif 'order_number' in card_data.keys():
+        set_order_number(card_id, card_data)
+    elif 'completed' in card_data.keys():
+        set_completed(card_id, card_data)
+    elif 'archived' in card_data.keys():
+        set_archived(card_id, card_data)
+    else:
+        return False, 'KeyError: Passed wrong key'
     return True, 'Column updated successfully'
-    
-def get_new_order_number(id:int):
-    return len(get_by_column_id(id)[1]) + 1
 
-def segregate(data:list):
-    for record in data:
-        result, message = update_by_id(record['id'], record)
+
+def get_new_order_number(column_id: int):
+    """Gets new number when adding a card
+
+    Args:
+        column_id (int): column id
+
+    Returns:
+        int: new number for ordering
+    """
+    len_of_cards = len(get_by_column_id(column_id)[1])
+    return len_of_cards + 1 if type(len_of_cards) is list else 1
+
+
+def segregate(card_data: list):
+    """Takes a list of data and updates them
+
+    Args:
+        card_data (list): list of cards values
+
+    Returns:
+        bool: true if successful otherwise false
+    """
+    for record in card_data:
+        result, response = update_by_id(record['id'], record)
         if not result:
-            return False, message
-    return True, message
+            return False, response
+    return True
 
-def sort_out(column_id:int, order_number:int):
+
+def sort_out(column_id: int, order_number: int):
+    """Sorts cards on deletion
+
+    Args:
+        column_id (int): column id
+        order_number (int): of deleted card
+    """
     data = [column_id, order_number]
     query = '''
     UPDATE cards SET order_number = order_number - 1 

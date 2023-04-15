@@ -17,34 +17,31 @@ export async function deleteCard(cardId){
 }
 
 export async function createCard(columnId, data){
-    const res = fetch(`/api/columns/${columnId}/cards`,{
+    return await fetch(`/api/columns/${columnId}/cards`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }
 
 export async function updateCard(cardId, data){
-    const res = fetch(`/api/cards/${cardId}`,{
+    return await fetch(`/api/cards/${cardId}`,{
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }
 
 export async function updateCards(columnId, data){
-    const res = fetch(`/api/columns/${columnId}/cards`,{
+    return await fetch(`/api/columns/${columnId}/cards`,{
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
-    return res
 }
