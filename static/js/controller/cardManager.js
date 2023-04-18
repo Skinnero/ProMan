@@ -2,38 +2,44 @@ import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js"
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { editCardTitleTemplate } from "../data/dataTemplates.js";
-import { boardsManager } from "./boardsManager.js";
 
 export let cardsManager = {
     loadCards: async function (columnId, boardId) {
         const cards = await dataHandler.getCardsByBoardId(columnId);
-        for (let card of cards) {
-            if (columnId == card.column_id) {
-                const cardBuilder = htmlFactory(htmlTemplates.card);
-                let  content = cardBuilder(card);
-                domManager.addChild(`.column[data-id="${columnId}"]`, content);
-                domManager.addEventListener(
-                    `h4[data-id="${card.id}"]`,
-                    "click",
-                    editCardTitle
-                );
-                const cardDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteCard)
-                content = cardDeleteButtonBuilder(card.id);
-                domManager.addChild(`.card[data-card-id="${card.id}"]`, content);
-                domManager.addEventListener(
-                    `.delete-card[card-id="${card.id}"]`,
-                    "click",
-                    () => deleteCard(card.id, columnId, boardId))
-                const cardElement = document.querySelector(`.card[data-card-id="${card.id}"]`);
-                cardElement.draggable = true;
-                cardElement.addEventListener("dragstart", dragStartHandler);
-                cardElement.addEventListener("dragend", dragEndHandler);
-                
-            }
-        }
-
+        buildCarts(cards, columnId)
     },
 };
+
+function buildCarts(cards, columnId) {
+    for (let card of cards) {
+        if (columnId == card.column_id) {
+            const cardBuilder = htmlFactory(htmlTemplates.card);
+            let  content = cardBuilder(card);
+            domManager.addChild(`.column-content[data-id="${columnId}"]`, content);
+            addCartListeners(card.id)
+        }
+    }
+}
+
+function addCartListeners(cardId){
+    domManager.addEventListener(
+        `h4[data-id="${cardId}"]`,
+        "click",
+        editCardTitle
+    );
+    domManager.addEventListener(
+        `.delete-card[card-id="${cardId}"]`,
+        "click",
+        () => deleteCard(cardId))
+    dragAndDrop(cardId)
+}
+
+function dragAndDrop(cardId) {
+    const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
+    cardElement.draggable = true;
+    cardElement.addEventListener("dragstart", dragStartHandler);
+    cardElement.addEventListener("dragend", dragEndHandler);
+}
 
 function editCardTitle (clickEvent) {
     const cardTitle = clickEvent.target;
@@ -52,10 +58,6 @@ function editCardTitle (clickEvent) {
     );
 }
 
-function test () {
-    console.log('asdf')
-}
-
 function dragStartHandler(event) {
     const cardElement = event.target;
     event.dataTransfer.setData("text/plain", cardElement.dataset.cardId);
@@ -66,7 +68,15 @@ function dragEndHandler(event) {
     cardElement.removeEventListener("dragstart", dragStartHandler);
     cardElement.removeEventListener("dragend", dragEndHandler);
 }
-function deleteCard(cardId, columnId, boardId) {
+
+function deleteCard(cardId) {
     apiDelete(`/api/cards/${cardId}`)
-    boardsManager.loadBoards(boardId)
+    document.querySelector(`.card[data-card-id='${cardId}']`).remove()
+}
+
+export async function createNewCard (columnId) {
+    let cardName = prompt("Enter card name.")
+    await apiPost(`/api/columns/${columnId}/cards`, createCardTemplate(cardName,columnId))
+    const cards = await dataHandler.getCardsByBoardId(columnId);
+    buildCarts([cards[cards.length - 1]], columnId)
 }

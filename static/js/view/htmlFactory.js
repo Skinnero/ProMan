@@ -3,11 +3,6 @@ export const htmlTemplates = {
     column: 2,
     card: 3,
     buttonBuilder: 4,
-    newCard: 5,
-    newColumn: 6,
-    deleteBoard: 7,
-    deleteColumn: 8,
-    deleteCard: 9,
 }
 
 export const builderFunctions = {
@@ -15,11 +10,6 @@ export const builderFunctions = {
     [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
     [htmlTemplates.newBoardButton]: buttonBuilder,
-    [htmlTemplates.newCard]: cardButtonBuilder,
-    [htmlTemplates.newColumn]: columnButtonBuilder,
-    [htmlTemplates.deleteBoard]: boardDeleteButtonBuilder,
-    [htmlTemplates.deleteColumn]: columnDeleteButtonBuilder,
-    [htmlTemplates.deleteCard]: cardDeleteButtonBuilder,
 };
 
 export function htmlFactory(template) {
@@ -35,46 +25,46 @@ export function htmlFactory(template) {
 }
 
 function boardBuilder(board) {
-    return `<div class="board-container">
-                <div class="board" data-board-id=${board.id}>
-                <h3 data-id=${board.id}>${board.title}</h3>
+    return `<div class="board" data-board-id=${board.id}>
+                <div class="board-title" data-board-id=${board.id}>
+                    <h3 data-id=${board.id}>${board.title}</h3>
                 </div>
-                <button class="toggle-board-button" data-board-id="${board.id}">Show Cards</button>
+                    <div class="board-content" data-board-id=${board.id}>
+                </div>
+                <div class="board-buttons">
+                    <button class="create-new-column" data-new-column-board-id=${board.id}>Create new column</button>
+                    <button class="delete-board" data-delete-board-id=${board.id}>Delete board</button>
+                    <button class="show-board-button" data-board-id="${board.id}">Show board</button>
+                    <button class="hide-board-button" data-board-id="${board.id}">Hide board</button>
+                </div>
             </div>`;
 }
 
-function columnBuilder(column) {
-    return `<div class="column" data-id="${column.id}">
-    <h4 data-id=${column.id}>${column.title}</h4>
-    </div>`;
+function columnBuilder(column, boardId) {
+    return `<div class="column" data-id="${column.id}" data-board-id="${boardId}">
+                <div class="column-title" data-id="${column.id}">
+                    <h4 data-id=${column.id}>${column.title}</h4>
+                </div>
+                <div class="column-buttons" data-id="${column.id}">
+                    <button class="delete-column" column-id="${column.id}">Delete column</button><br>
+                    <button class="create-new-card" column-id="${column.id}">Create new card</button>
+                </div>
+                <div class="column-content" data-id="${column.id}">
+                </div>
+            </div>`;
 }
 
 function cardBuilder(card) {
     return `<div class="card" data-card-id="${card.id}" >
-    <h4 data-id="${card.id}">${card.title}</h4
-    </div>`;
+                <div class="card-title">
+                    <h4 data-id="${card.id}">${card.title}</h4>
+                </div>
+                <div class="card-buttons" data-card-id="${card.id}">
+                    <button class="delete-card" card-id="${card.id}">Delete card</button>
+                </div>
+            </div>`;
 }
 
 function buttonBuilder() {
     return `<button class="create-board-button">Create Board</button>`;
   }
-
-function cardButtonBuilder(columnId) {
-    return `<br><button class="create-new-card" column-id="${columnId}">Create new card</button>`;
-}
-
-function columnButtonBuilder() {
-    return `<br><button class="create-new-column">Create new column</button>`;
-}
-
-function boardDeleteButtonBuilder() {
-    return `<br><button class="delete-board">Delete board</button>`;
-}
-
-function columnDeleteButtonBuilder(columnId) {
-    return `<br><button class="delete-column" column-id="${columnId}">Delete column</button>`;
-}
-
-function cardDeleteButtonBuilder(cardId) {
-    return `<br><button class="delete-card" card-id="${cardId}">Delete card</button>`;
-}
