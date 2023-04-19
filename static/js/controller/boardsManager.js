@@ -8,6 +8,7 @@ import { createBoardButton } from "./homeManager.js";
 
 
 export let boardsManager = {
+    // Load boards
     loadBoards: async function (boardId) {
         const boards = await dataHandler.getBoards();
         createBoardButton()
@@ -17,6 +18,7 @@ export let boardsManager = {
 
 
 function createBoards(boards) {
+    // Create board for every board and add functionality
     for (let board of boards) {
         const boardBuilder = htmlFactory(htmlTemplates.board);
         const content = boardBuilder(board);
@@ -27,10 +29,11 @@ function createBoards(boards) {
 }
 
 function addListeners (boardId) {
+    //Add event listeners for board buttons
     domManager.addEventListener(
         `.show-board-button[data-board-id="${boardId}"]`,
         "click",
-        showHideButtonHandler
+        showButtonHandler
     );
     domManager.addEventListener(
         `h3[data-id="${boardId}"]`,
@@ -47,10 +50,10 @@ function addListeners (boardId) {
         "click",
         () => deleteBoard(boardId)
     )
-    // document.querySelectorAll(".column[data-board-id='1']")
 }
 
-function showHideButtonHandler(clickEvent) {
+function showButtonHandler(clickEvent) {
+    //Show content of board
     const boardId = clickEvent.target.dataset.boardId;
     columnsManager.loadColumns(boardId);
     clickEvent.target.style.display = "none"

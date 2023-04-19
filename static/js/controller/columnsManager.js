@@ -2,8 +2,7 @@ import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js"
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager, createNewCard } from "./cardManager.js";
-import { editColumnTitleTemplate, createCardTemplate, createColumnTemplate } from "../data/dataTemplates.js";
-import { boardsManager } from "./boardsManager.js";
+import { editColumnTitleTemplate, createColumnTemplate } from "../data/dataTemplates.js";
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
@@ -15,8 +14,8 @@ export let columnsManager = {
 function buildColumns (columns, boardId) {
     for (let column of columns) {
         if (column.board_id == boardId) {
-            const cardBuilder = htmlFactory(htmlTemplates.column);
-            let content = cardBuilder(column, boardId);
+            const columnBuilder = htmlFactory(htmlTemplates.column);
+            let content = columnBuilder(column, boardId);
             cardsManager.loadCards(column.id, boardId);
             domManager.addChild(`.board-content[data-board-id='${boardId}']`, content);
             addColumnListeners(column.id, boardId)
@@ -39,12 +38,12 @@ function addColumnListeners(columnId, boardId) {
         "click",
         () => deleteColumn(columnId, boardId));
     domManager.addEventListener(
-        `.column[data-id="${columnId}"]`,
+        `.column-content[data-id="${columnId}"]`,
         "drop",
         dropHandler
     );
     domManager.addEventListener(
-        `.column[data-id="${columnId}"]`,
+        `.column-content[data-id="${columnId}"]`,
         "dragover",
         dragOverHandler
     );
@@ -87,11 +86,9 @@ function dropHandler(event) {
     event.preventDefault();
     const cardId = event.dataTransfer.getData("text/plain");
     const targetColumn = event.currentTarget;
-    const targetColumnId = targetColumn.dataset.columnId;
-    const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
-    console.log(cardElement)
-    targetColumn.appendChild(cardElement);
-    apiPost(`/api/cards/${cardId}/update-column`, { column_id: targetColumnId })
+    const targetColumnId = targetColumn.dataset.id;
+    targetColumn.appendChild(document.querySelector(`.card[data-card-id='${cardId}']`));
+    apiPatch(`/api/cards/${cardId}`, { column_id: targetColumnId })
 }
 
 function dragOverHandler(event) {

@@ -1,7 +1,7 @@
 import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
-import { editCardTitleTemplate } from "../data/dataTemplates.js";
+import { editCardTitleTemplate, createCardTemplate } from "../data/dataTemplates.js";
 
 export let cardsManager = {
     loadCards: async function (columnId, boardId) {
@@ -65,8 +65,9 @@ function dragStartHandler(event) {
 
 function dragEndHandler(event) {
     const cardElement = event.target;
-    cardElement.removeEventListener("dragstart", dragStartHandler);
-    cardElement.removeEventListener("dragend", dragEndHandler);
+    // stary kod drag and drop działa bez ale zostawiam jakby kiedyś przestało
+    // cardElement.removeEventListener("dragstart", dragStartHandler);
+    // cardElement.removeEventListener("dragend", dragEndHandler);
 }
 
 function deleteCard(cardId) {

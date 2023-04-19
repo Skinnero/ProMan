@@ -47,6 +47,12 @@ body {
     position: relative;
 }
 
+.column-content {
+    width: 100%;
+    height: auto;
+    min-height: 100px;
+}
+
 button {
     color: #fff;
     height: 20px;
@@ -72,6 +78,7 @@ h4 {
     justify-content: center;
     align-items: center;
     display: flex;
+    word-wrap: break-word;
 }
 
 h3 {
