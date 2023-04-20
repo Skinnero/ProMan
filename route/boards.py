@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-import data_manager.boards as boards
+import data_handler.boards as boards
 
 api_boards = Blueprint('api_boards', __name__)
 
@@ -11,19 +11,21 @@ def manage_all_boards():
     POST > Creates new boards with default columns,
 
     Returns:
-        str or json: json when methed GET else feedback, finally status code
-    """    
+        str or json: json when method GET else feedback, finally status code
+    """
     if request.method == 'GET':
         return jsonify(boards.get_all()), 200
-    
+
     elif request.method == 'POST':
-        response = boards.add(request.json)
-        return response, 200
+        boards.add(request.json)
+        board = boards.get_all()[-1]
+        print(board)
+        return jsonify(board), 200
 
 
-@api_boards.route("/api/boards/<int:board_id>", methods=['GET','POST','DELETE','PATCH'])
-def manage_single_board(board_id):
-    """Manages a single board with <board_id>,
+@api_boards.route("/api/boards/<int:board_id>", methods=['GET', 'POST', 'DELETE', 'PATCH'])
+def manage_single_board(board_id: int):
+    """Manages a single board,
     GET > Returns json with that board id,
     DELETE > Deletes board with that id,
     PATCH > Updates single board
@@ -33,19 +35,17 @@ def manage_single_board(board_id):
 
     Returns:
         str or json: json when method GET else feedback, finally status code
-    """  
+    """
     if request.method == 'GET':
-        data = boards.get_one(board_id)
+        data = boards.get_one_by_id(board_id)
         if data is None or data is False:
             return 'Endpoint not found', 404
         return jsonify(data), 200
-    
+
     elif request.method == 'DELETE':
         result, response = boards.delete_by_id(board_id)
         return (response, 200) if result else (response, 404)
-    
+
     elif request.method == 'PATCH':
         result, response = boards.update_by_id(board_id, request.json)
         return (response, 200) if result else (response, 404)
-
-
