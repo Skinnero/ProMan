@@ -22,11 +22,12 @@ def manage_all_columns_from_board(board_id: int):
         return (jsonify(response), 200) if result else (response, 404)
 
     elif request.method == 'POST':
-        result, response = columns.add(board_id, request.json)
-        return (response, 200) if result else (response, 404)
+        columns.add(board_id, request.json)
+        response = columns.get_one_by_id(columns.get_by_board_id(board_id)[-1][-1]['id'])
+        return response, 200
 
     elif request.method == 'PATCH':
-        result, response = columns.segregate(request.json)
+        result, response = columns.segregate(board_id, request.json)
         return (response, 200) if result else (response, 404)
 
 

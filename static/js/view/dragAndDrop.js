@@ -30,7 +30,6 @@ function handleDragEnter(e){
 }
 
 function handleDragOver(e){
-
 }
 
 function handleDragLeave(e){

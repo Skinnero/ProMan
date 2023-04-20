@@ -1,6 +1,7 @@
 export function getDivForBoards(board){
     const boardsDiv = document.createElement('div')
     boardsDiv.className = 'board-management'
+    boardsDiv.dataset.id = board.id
     boardsDiv.appendChild(getShowBoardButton(board))
     boardsDiv.appendChild(getDeleteBoardButton(board))
     return boardsDiv
@@ -8,7 +9,7 @@ export function getDivForBoards(board){
 export function getShowBoardButton(board){
     const showBoardButton = document.createElement('button')
     showBoardButton.className = 'show-board'
-    showBoardButton.innerText = board.name
+    showBoardButton.innerText = board.title
     showBoardButton.dataset.id = board.id
     return showBoardButton
 }
@@ -31,20 +32,7 @@ export function getBoardTitle(board){
     const textareaTitle = document.createElement('textarea')
     boardTitleDiv.className = 'board-title'
     textareaTitle.dataset.id = board.id
-    textareaTitle.value = board.name
+    textareaTitle.value = board.title
     boardTitleDiv.appendChild(textareaTitle)
     return boardTitleDiv
-}
-
-export function getLeftPanel(){
-    let boardDiv = document.createElement('div')
-    boardDiv.id = 'left-panel'
-    return boardDiv
-}
-
-export function getCreateBoardButton(){
-    let createBoardButton = document.createElement('button')
-    createBoardButton.id = 'create-board'
-    createBoardButton.innerText = 'Create Board'
-    return createBoardButton
 }

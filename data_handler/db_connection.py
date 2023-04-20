@@ -29,7 +29,7 @@ def establish_connection(connection_data=None):
         print(e)
 
 
-def get_connection_data(db_name:str = None):
+def get_connection_data(db_name: str = None):
     """
     Give back a properly formatted dictionary based on the environment variables values which are started
     with :MY__PSQL_: prefix

@@ -17,8 +17,10 @@ def manage_all_boards():
         return jsonify(boards.get_all()), 200
 
     elif request.method == 'POST':
-        response = boards.add(request.json)
-        return response, 200
+        boards.add(request.json)
+        board = boards.get_all()[-1]
+        print(board)
+        return jsonify(board), 200
 
 
 @api_boards.route("/api/boards/<int:board_id>", methods=['GET', 'POST', 'DELETE', 'PATCH'])

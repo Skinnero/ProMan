@@ -10,13 +10,23 @@
         <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-        <script type="module" src="{{ url_for('static', filename='js/view/main.js') }}" defer></script>
+        <script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js')}}"></script>
+        <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
     </head>
     <body>
         <div id="nav">
-            <button style="padding-left: 15%;"><a href=""> Home</a></button>
-            <button style="float: right; padding-right: 15%;">Sign up</button>
-            <button style="float: right;">Log in</button>
+            <button style="padding-left: 15%;"><a href="/private"> Home</a></button>
+            <button id="signup" style="float: right; padding-right: 15%;">Sign up</button>
+            <button id="login" style="float: right;">Log in</button>
         </div>
+    <div id="left-panel">
+        <button id="create-board">Create Board</button>
+        {% for board in boards %}
+            <div class="board-management" data-id="{{ board.id }}">
+                <button class="show-board" data-id="{{ board.id }}">{{ board.title }}</button>
+                <button class="delete-board" data-id="{{ board.id }}">-</button>
+            </div>
+        {% endfor %}
+    </div>
     </body>
 </html>

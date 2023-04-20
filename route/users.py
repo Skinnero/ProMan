@@ -1,4 +1,5 @@
-from flask import Blueprint, request, session, redirect, url_for
+from flask import Blueprint, request, redirect, url_for, jsonify
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies
 import data_handler.users as users
 from util import hash_user_password, compare_password
 
@@ -17,9 +18,9 @@ def sing_up():
         data['password'] = hash_user_password(data['password'])
         result, response = users.add(data)
         if result:
-            session['user'] = users.get_by_name(data['name'])
-            session.permanent = False
-            return response, 200
+            response = jsonify({"msg": 'Login successful'})
+            access_token = create_access_token(identity=users.get_by_name(data['name']))
+            return jsonify(access_token=access_token)
         return response, 404
     except KeyError:
         return 'KeyError: Passed wrong key', 404
@@ -33,13 +34,15 @@ def log_in():
     Returns:
         str: feedback + status code
     """
+    # TODO: FIX WHEN USER IS NOT IN DB
     data = request.json
     try:
         user_password = users.get_password_by_name(data['name'])
         if compare_password(data['password'], user_password['password']):
-            session['user'] = users.get_by_name(data['name'])
-            session.permanent = False
-            return 'User logged in', 200
+            response = jsonify({"msg": 'Login successful'})
+            access_token = create_access_token(identity=users.get_by_name(data['name']))
+            print(set_access_cookies(response, access_token))
+            return jsonify(access_token=access_token)
         return 'Name or password incorrect', 404
     except KeyError:
         return 'KeyError: Passed wrong key', 404
@@ -52,5 +55,5 @@ def log_out():
     Returns:
         redirect: goes back to index website
     """
-    session.clear()
+    unset_access_cookies(jsonify({"msg": 'Logout successful'}))
     return redirect(url_for('index'))

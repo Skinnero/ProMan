@@ -13,13 +13,14 @@ export async function getColumnsByBoardId(boardId){
 }
 
 export async function createColumn(boardId, data){
-    return await fetch(`/api/boards/${boardId}/columns`,{
+    const res = await fetch(`/api/boards/${boardId}/columns`,{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
+    return await res.json()
 }
 
 export async function deleteColumn(columnId){

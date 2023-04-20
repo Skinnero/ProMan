@@ -1,4 +1,4 @@
-export function getColmunDiv(column) {
+export function getColumnDiv(column) {
     let columnDiv = document.createElement('div')
     columnDiv.className = 'columns'
     columnDiv.draggable = true
@@ -11,7 +11,7 @@ export function getColumnTitle(column) {
     const deleteColumnSpan = document.createElement('span')
     columnTitle.className = 'column-title'
     columnTextarea.dataset.id = column.id
-    columnTextarea.value = column.name
+    columnTextarea.value = column.title
     deleteColumnSpan.className = 'delete-column'
     deleteColumnSpan.innerText = 'x'
     deleteColumnSpan.dataset.id = column.id

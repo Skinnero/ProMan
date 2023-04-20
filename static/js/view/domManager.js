@@ -4,26 +4,33 @@ import * as columnsManager from '../controller/columnsManager.js'
 import * as columnsHandler from '../data_handler/columns.js'
 import * as cardsManager from '../controller/cardsManager.js'
 import * as cardsHandler from '../data_handler/cards.js'
-import * as dragAndDrop from './dragAndDrop.js'
+import * as usersManager from '../controller/usersManager.js'
+import * as usersHandler from '../data_handler/users.js'
+import {socket} from '../websocket.js'
+// TODO: Refactor all event listeners for a better clarity
 
 export async function setBoardsButtons(){
-    await boardsManager.setBoards()
     let boardOnMainPage
 
-    function setDeleteBoardButtons(){
-        const deleteButtons = document.querySelectorAll('.board-management .delete-board')
-        for (const button of deleteButtons){
-            button.addEventListener('click', () => {
+    function setDeleteBoardButtons(button){
+        const eventHandler = (button) => {
                 boardsHandler.deleteBoard(button.dataset.id)
-                setBoardsButtons()
-            })
+                boardsManager.removeSingleBoard(button.dataset.id, boardOnMainPage)
+            }
+        if (!button){
+            const deleteButtons = document.querySelectorAll('.board-management .delete-board')
+            for (const button of deleteButtons){
+                button.addEventListener('click', () => {eventHandler(button)})
+            }
+        } else {
+            button.addEventListener('click', () => {eventHandler(button)})
         }
     }
 
     function setEditBoardTitle(){
         const editTextarea = document.querySelectorAll('.board-title textarea')[0]
         const eventHandler = (e) => {
-            const data = {name: e.target.value}
+            const data = {title: e.target.value}
             if (e.keyCode === 13){
                 e.preventDefault()
                 boardsHandler.updateBoard(boardOnMainPage.id , data)
@@ -39,31 +46,42 @@ export async function setBoardsButtons(){
     }
 
     function setCreateBoardButton(){
-        const newBoard = {name: 'test', user_id: 3}
         const createBoardButton = document.getElementById('create-board')
         createBoardButton.addEventListener('click', async ()=>{
-            await boardsHandler.createBoard(newBoard)
-            await setBoardsButtons()
+            let newBoard = {title: 'test', user_id: 3}
+            newBoard = await boardsHandler.createBoard(newBoard)
+            newBoard = boardsManager.addSingleBoard(newBoard)
+            setDeleteBoardButtons(newBoard.getElementsByClassName('delete-board')[0])
+            setShowBoardButton(newBoard.getElementsByClassName('show-board')[0])
+            socket.emit('message', 'Board Created')
         })
     }
 
-    function setShowBoardButton(){
-        const showButtons = document.querySelectorAll('.board-management .show-board')
-        const clickHandler = async (e) => {
+    function setShowBoardButton(button){
+        const eventHandler = async (e, showButtons) => {
             boardOnMainPage = await boardsHandler.getBoard(e.target.dataset.id)
             boardsManager.setBoardOnMainPage(boardOnMainPage)
             await columnsManager.setColumns(boardOnMainPage)
             await cardsManager.setCardsOnColumns()
-            await setBoardsButtons()
             setEditBoardTitle()
             setColumnsDom(boardOnMainPage)
-            showButtons.forEach(button => {
-                button.removeEventListener('click', clickHandler)
-            })
+            socket.emit('join', boardOnMainPage.id)
+            if (!showButtons.length){
+                showButtons.removeEventListener('click', eventHandler)
+            } else {
+                showButtons.forEach(button => {
+                    button.removeEventListener('click', eventHandler)
+                })
+            }
         }
-        showButtons.forEach(button => {
-            button.addEventListener('click', clickHandler)
-        })
+        if (!button){
+            const showButtons = document.querySelectorAll('.board-management .show-board')
+            showButtons.forEach(button => {
+                button.addEventListener('click', (e) => {eventHandler(e, showButtons)})
+            })
+        } else {
+            button.addEventListener('click', (e) => {eventHandler(e, button)})
+        }
     }
     setDeleteBoardButtons()
     setShowBoardButton()
@@ -71,11 +89,10 @@ export async function setBoardsButtons(){
 }
 
 function setColumnsDom(board){
-    function editTitle(){
-        const columns = document.querySelectorAll('.column-title textarea')
+    function editTitle(column){
         const editEventHandler = (e) => {
             const columnId = e.target.dataset.id
-            const data = {name: e.target.value}
+            const data = {title: e.target.value}
             if (e.keyCode === 13){
                 e.preventDefault()
                 columnsHandler.updateColumn(columnId, data)
@@ -84,72 +101,89 @@ function setColumnsDom(board){
                 columnsHandler.updateColumn(columnId, data)
             }
         }
-        columns.forEach(column => {
+        if (column){
             column.addEventListener('keydown', editEventHandler)
             column.addEventListener('blur', editEventHandler)
-        })
+        } else {
+            const columns = document.querySelectorAll('.column-title textarea')
+            columns.forEach(column => {
+                column.addEventListener('keydown', editEventHandler)
+                column.addEventListener('blur', editEventHandler)
+            })
+        }
     }
     function createColumn(){
-        // TODO: Add to element instead of reset EVERYWHERE
         const createButton = document.getElementsByClassName('create-column')[0]
-        const data = {name: "NEW"}
+        const data = {title: "NEW"}
         createButton.addEventListener('click', async () => {
-            await columnsHandler.createColumn(board.id, data)
-            boardsManager.setBoardOnMainPage(board)
-            await columnsManager.setColumns(board)
-            await cardsManager.setCardsOnColumns()
-            setColumnsDom(board)
+            let newColumn = await columnsHandler.createColumn(board.id, data)
+            newColumn = columnsManager.addSingleColumn(newColumn)
+            deleteColumn(newColumn.getElementsByClassName('delete-column')[0])
+            editTitle(newColumn.getElementsByTagName('textarea')[0])
+            const createCardButton = cardsManager.setCardsOnSingleColumn(newColumn)
+            cardsDom.createCard(createCardButton.getElementsByClassName('create-card')[0])
         })
     }
-    function deleteColumn(){
-        const deleteButtons = document.getElementsByClassName('delete-column')
-        for (const button of deleteButtons) {
-            button.addEventListener('click', async (e) => {
-                await columnsHandler.deleteColumn(e.target.dataset.id)
-                boardsManager.setBoardOnMainPage(board)
-                await columnsManager.setColumns(board)
-                await cardsManager.setCardsOnColumns()
-                setColumnsDom(board)
-            })
+    function deleteColumn(column){
+
+        const eventHandler = async (e) => {
+            await columnsHandler.deleteColumn(e.target.dataset.id)
+            columnsManager.removeSingleColumn(e.target.dataset.id)
+        }
+        if (column){
+                column.addEventListener('click', eventHandler)
+        } else {
+            const deleteButtons = document.getElementsByClassName('delete-column')
+            for (const button of deleteButtons) {
+                button.addEventListener('click', eventHandler)
+            }
         }
     }
     editTitle()
     createColumn()
     deleteColumn()
-    setCardsDom(board)
+    cardsDom.createCard()
+    cardsDom.deleteCard()
+    cardsDom.editCard()
 }
 
-function setCardsDom(board){
-    function createCard(){
-        const createButtons = document.getElementsByClassName('create-card')
-        for (const button of createButtons){
-            button.addEventListener('click', async () => {
-                const data = {message: "NEW", column_id: button.dataset.id}
-                await cardsHandler.createCard(button.dataset.id, data)
-                boardsManager.setBoardOnMainPage(board)
-                await columnsManager.setColumns(board)
-                await cardsManager.setCardsOnColumns()
-                setColumnsDom(board)
-            })
+const cardsDom = {
+    createCard: (button) => {
+        const eventHandler = async (button) => {
+            let newCard = {title: "NEW", column_id: button.dataset.id}
+            newCard = await cardsHandler.createCard(button.dataset.id, newCard)
+            newCard = cardsManager.addSingleCard(newCard)
+            cardsDom.deleteCard(newCard.getElementsByClassName('delete-card')[0])
+            cardsDom.editCard(newCard.getElementsByTagName('textarea')[0])
         }
-    }
-    function deleteCard(){
-        const cards = document.getElementsByClassName('delete-card')
-        for (const card of cards){
-            card.addEventListener('click', async () => {
-                await cardsHandler.deleteCard(card.dataset.id)
-                boardsManager.setBoardOnMainPage(board)
-                await columnsManager.setColumns(board)
-                await cardsManager.setCardsOnColumns()
-                setColumnsDom(board)
-            })
+        if (!button) {
+            const createButtons = document.getElementsByClassName('create-card')
+            for (const button of createButtons){
+                button.addEventListener('click', () => {eventHandler(button)})
+            }
+        } else {
+            button.addEventListener('click', () => {eventHandler(button)})
         }
-    }
-    function editCard(){
-        const cards = document.querySelectorAll('.cards textarea')
+
+    },
+    deleteCard: (button) => {
+        const eventHandler = async (card) => {
+            await cardsHandler.deleteCard(card.dataset.id)
+            cardsManager.removeSingleCard(card.dataset.id)
+        }
+        if (!button){
+            const cards = document.getElementsByClassName('delete-card')
+            for (const card of cards) {
+                card.addEventListener('click', () => {eventHandler(card)})
+            }
+        } else {
+            button.addEventListener('click', () => {eventHandler(button)})
+        }
+    },
+    editCard: (button) => {
         const editEventHandler = (e) => {
             const cardId = e.target.dataset.id
-            const data = {message: e.target.value}
+            const data = {title: e.target.value}
             if (e.keyCode === 13){
                 e.preventDefault()
                 cardsHandler.updateCard(cardId, data)
@@ -158,18 +192,87 @@ function setCardsDom(board){
                 cardsHandler.updateCard(cardId, data)
             }
         }
-
-        for (const card of cards){
-            card.addEventListener('keydown', editEventHandler)
-            card.addEventListener('blur', editEventHandler)
+        if (!button) {
+            const cards = document.querySelectorAll('.cards textarea')
+            for (const card of cards) {
+                card.addEventListener('keydown', editEventHandler)
+                card.addEventListener('blur', editEventHandler)
+            }
+        } else {
+                button.addEventListener('keydown', editEventHandler)
+                button.addEventListener('blur', editEventHandler)
         }
-    }
-
-    deleteCard()
-    createCard()
-    editCard()
+    },
 }
 
-function setUsersDom(){
+export function setUsersDom(){
+    usersManager.setUserModal()
+    usersManager.setUserModal()
 
+    function setLogInButton(){
+        const logInButton = document.getElementById('login')
+        logInButton.addEventListener('click', () => {
+            const modal = document.getElementsByClassName('modal')[0]
+            modal.style.display = 'block'
+            usersManager.getLogIn()
+            window.onclick = (e) => {
+                if (e.target == modal){
+                    modal.style.display = 'none'
+                }
+            }
+        })
+        document.getElementsByTagName('form')[0].addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const modalContent = document.getElementsByClassName('modal-content')[0]
+            const modal = document.getElementsByClassName('modal')[0]
+            const inputs = document.querySelectorAll('form input')
+            const userData = {name: inputs[0].value, password: inputs[1].value}
+            if (await usersHandler.logInUser(userData)){
+                modal.style.display = 'none'
+                // window.location = '/'
+            } else {
+                if (document.querySelectorAll('.modal-content p')[0]){
+                    document.querySelectorAll('.modal-content p')[0].innerHTML = "Wrong Username or Password!"
+                } else {
+                    const p  = document.createElement('p')
+                    p.innerHTML = "Wrong Username or Password!"
+                    modalContent.insertBefore(p, modalContent.firstChild)
+                }
+            }
+        })
+    }
+    function setSignUpButton(){
+        const signUpButton = document.getElementById('signup')
+        signUpButton.addEventListener('click', () => {
+            const modal = document.getElementsByClassName('modal')[1]
+            modal.style.display = 'block'
+            usersManager.getSignUp()
+            window.onclick = (e) => {
+                if (e.target == modal){
+                    modal.style.display = 'none'
+                }
+            }
+        })
+        document.getElementsByTagName('form')[1].addEventListener('submit', async (e) => {
+            e.preventDefault()
+            const modalContent = document.getElementsByClassName('modal-content')[1]
+            const modal = document.getElementsByClassName('modal')[1]
+            const inputs = document.querySelectorAll('form input')
+            const userData = {name: inputs[2].value, password: inputs[3].value}
+            if (await usersHandler.singUpUser(userData)){
+                modal.style.display = 'none'
+                window.location = '/'
+            } else {
+                if (document.querySelectorAll('.modal-content p')[0]){
+                    document.querySelectorAll('.modal-content p')[0].innerHTML = "User with that name already exist"
+                } else {
+                    const p  = document.createElement('p')
+                    p.innerHTML = "User with that name already exist"
+                    modalContent.insertBefore(p, modalContent.firstChild)
+                }
+            }
+        })
+    }
+    setLogInButton()
+    setSignUpButton()
 }

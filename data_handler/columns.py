@@ -57,7 +57,7 @@ def delete_by_id(column_id: int):
     column_data = get_one_by_id(column_id)
     query = 'DELETE FROM columns where id = %s'
     CURSOR.execute(query, [column_id])
-    sort_out(column_data['board_id'], column_data['order_number'])
+    sort_out_on_delete(column_data['board_id'], column_data['order_number'])
     return True, 'Column deleted successfully'
 
 
@@ -118,27 +118,30 @@ def get_new_order_number(board_id: int):
     Returns:
         int: new number for ordering
     """
-    len_of_columns = len(get_by_board_id(board_id)[1])
-    return len_of_columns + 1 if type(len_of_columns) is list else 1
+    len_of_columns = get_by_board_id(board_id)[-1]
+    return len(len_of_columns) + 1 if type(len_of_columns) is list else 1
 
 
-def segregate(column_data: list):
+def segregate(board_id: int, column_data: list):
     """Takes a list of data and updates them
 
     Args:
+        board_id (int): board id
         column_data (list): list of cards values
 
     Returns:
         bool: true if successful otherwise false
     """
     for record in column_data:
+        column = get_one_by_id(record['id'])
+        sort_out_on_update(board_id, record['order_number'], column)
         result, message = update_by_id(record['id'], record)
         if not result:
             return False, message
     return True, 'Columns updated successfully'
 
 
-def sort_out(board_id: int, order_number: int):
+def sort_out_on_delete(board_id: int, order_number: int):
     """Sorts cards on deletion
 
     Args:
@@ -149,4 +152,25 @@ def sort_out(board_id: int, order_number: int):
     query = '''
     UPDATE columns SET order_number = order_number - 1 
     WHERE board_id = %s AND order_number > %s'''
+    CURSOR.execute(query, data)
+
+
+def sort_out_on_update(board_id: int, order_number: int, column: dict):
+    """Sorts cards on update
+
+    Args:
+        board_id (int): column id
+        order_number (int): of deleted card
+        column (dict): columns data
+    """
+    if column['order_number'] < order_number:
+        data = [board_id, column['order_number'], order_number]
+        query = '''
+        UPDATE columns SET order_number = order_number - 1 
+        WHERE board_id = %s AND order_number BETWEEN %s AND %s'''
+    else:
+        data = [board_id, order_number, column['order_number']]
+        query = '''
+        UPDATE columns SET order_number = order_number + 1 
+        WHERE board_id = %s AND order_number BETWEEN %s AND %s'''
     CURSOR.execute(query, data)

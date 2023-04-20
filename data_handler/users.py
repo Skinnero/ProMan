@@ -26,4 +26,4 @@ def get_password_by_name(name: str):
 
     query = 'SELECT password FROM users where name = %s'
     CURSOR.execute(query, [name])
-    return CURSOR.fetchone()
+    return CURSOR.fetchone() if not None else False

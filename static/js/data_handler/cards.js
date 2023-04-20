@@ -17,13 +17,14 @@ export async function deleteCard(cardId){
 }
 
 export async function createCard(columnId, data){
-    return await fetch(`/api/columns/${columnId}/cards`,{
+    let res = await fetch(`/api/columns/${columnId}/cards`,{
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
+    return await res.json()
 }
 
 export async function updateCard(cardId, data){

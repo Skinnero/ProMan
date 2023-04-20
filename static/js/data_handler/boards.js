@@ -13,13 +13,14 @@ export async function deleteBoard(boardId){
 }
 
 export async function createBoard(data){
-    return await fetch('/api/boards', {
+    let res = await fetch('/api/boards', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     })
+    return await res.json()
 }
 
 export async function updateBoard(boardId, data){

@@ -22,11 +22,12 @@ def manage_all_cards_from_column(column_id: int):
         return (jsonify(response), 200) if result else (response, 404)
 
     elif request.method == 'POST':
-        result, response = cards.add(column_id, request.json)
-        return (response, 200) if result else (response, 404)
+        cards.add(column_id, request.json)
+        response = cards.get_one_by_id(cards.get_by_column_id(column_id)[-1][-1]['id'])
+        return jsonify(response), 200
 
     elif request.method == 'PATCH':
-        result, response = cards.segregate(request.json)
+        result, response = cards.segregate(column_id, request.json)
         return (response, 200) if result else (response, 404)
 
 
