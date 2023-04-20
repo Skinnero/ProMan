@@ -12,12 +12,3 @@ export function createBoardButton () {
         createBoard
     )
   }
-<<<<<<< HEAD
-
-async function createBoardAction() {
-    let boardName = prompt("Enter board name.")
-    await apiPost("/api/boards", createBoardTemplate(boardName))
-    boardsManager.loadBoards()
-}
-=======
->>>>>>> origin/domin

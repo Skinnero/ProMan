@@ -6,37 +6,9 @@ import { editCardTitleTemplate, createCardTemplate } from "../data/dataTemplates
 export let cardsManager = {
     loadCards: async function (columnId, boardId) {
         const cards = await dataHandler.getCardsByBoardId(columnId);
-<<<<<<< HEAD
-        for (let card of cards) {
-            if (columnId == card.column_id) {
-                const cardBuilder = htmlFactory(htmlTemplates.card);
-                let  content = cardBuilder(card);
-                domManager.addChild(`.column[data-id="${columnId}"]`, content);
-                domManager.addEventListener(
-                    `h4[data-id="${card.id}"]`,
-                    "click",
-                    editCardTitle
-                );
-                const cardDeleteButtonBuilder = htmlFactory(htmlTemplates.deleteCard)
-                content = cardDeleteButtonBuilder(card.id);
-                domManager.addChild(`.card[data-card-id="${card.id}"]`, content);
-                domManager.addEventListener(
-                    `.delete-card[card-id="${card.id}"]`,
-                    "click",
-                    () => deleteCard(card.id, columnId, boardId))
-                const cardElement = document.querySelector(`.card[data-card-id="${card.id}"]`);
-                cardElement.draggable = true;
-                cardElement.addEventListener("dragstart", dragStartHandler);
-                cardElement.addEventListener("dragend", dragEndHandler);  
-            }
-        }
-    }
-}
-=======
         buildCarts(cards, columnId)
     },
 };
->>>>>>> origin/domin
 
 function buildCarts(cards, columnId) {
     for (let card of cards) {
@@ -84,11 +56,7 @@ function editCardTitle (clickEvent) {
             cardTitle.innerText = newTitle;
             apiPatch(`/api/cards/${cardId}`, editCardTitleTemplate(newTitle))
         }}
-<<<<<<< HEAD
-    )
-=======
     );
->>>>>>> origin/domin
 }
 
 function dragStartHandler(event) {
@@ -103,12 +71,6 @@ function dragEndHandler(event) {
     // cardElement.removeEventListener("dragend", dragEndHandler);
 }
 
-<<<<<<< HEAD
-async function deleteCard(cardId, columnId, boardId) {
-    await apiDelete(`/api/cards/${cardId}`)
-    boardsManager.loadBoards(boardId)
-}
-=======
 function deleteCard(cardId) {
     apiDelete(`/api/cards/${cardId}`)
     document.querySelector(`.card[data-card-id='${cardId}']`).remove()
@@ -120,4 +82,3 @@ export async function createNewCard (columnId) {
     const cards = await dataHandler.getCardsByBoardId(columnId);
     buildCarts([cards[cards.length - 1]], columnId)
 }
->>>>>>> origin/domin
