@@ -19,7 +19,6 @@ def manage_all_boards():
     elif request.method == 'POST':
         boards.add(request.json)
         board = boards.get_all()[-1]
-        print(board)
         return jsonify(board), 200
 
 

@@ -16,4 +16,3 @@ export let domManager = {
         }
     },
 };
-document.addEventListener()

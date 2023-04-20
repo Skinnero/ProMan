@@ -1,6 +1,5 @@
-from flask import Flask, render_template, jsonify, request
-from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity, decode_token
-from flask_socketio import SocketIO, emit, send, rooms, join_room, leave_room
+from flask import Flask, render_template, jsonify
+from flask_jwt_extended import JWTManager, jwt_required, get_jwt_identity
 from route.boards import api_boards
 from route.columns import api_columns
 from route.cards import api_cards
@@ -12,9 +11,8 @@ app.register_blueprint(api_boards)
 app.register_blueprint(api_columns)
 app.register_blueprint(api_cards)
 app.register_blueprint(api_users)
-app.config['SECRET_KEY'] = '-_-'
-app.config['JWT_SECRET_KEY'] = 'xD'
-socketio = SocketIO(app, cros_allowed_origins='*')
+app.config['JWT_SECRET_KEY'] = b'xD'
+app.config['SECRET_KEY'] = b'-_-'
 jwt = JWTManager(app)
 
 
@@ -28,18 +26,6 @@ def index():
     return render_template('index.html', boards=get_all())
 
 
-@socketio.on("message")
-def handle_connect(message):
-    emit("message", 'Hello back!')
-    print('Received Data: ' + message)
-
-
-@socketio.on('join')
-def on_join(room_id):
-    join_room(room_id)
-    print(rooms())
-
-
 @app.route('/private', methods=["GET"])
 @jwt_required()
 def user_room():
@@ -47,9 +33,10 @@ def user_room():
     print(current_user)
     return jsonify(logged_in_as=current_user), 200
 
-
 def main():
-    socketio.run(app, debug=True)
+    """Main function
+    """
+    app.run(debug=True)
 
 
 if __name__ == '__main__':
