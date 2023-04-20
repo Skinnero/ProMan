@@ -3,8 +3,7 @@ export function createBoardTemplate(boardName) {
 }
 
 export function editBoardTitleTemplate(boardTitle) {
-    let newNameJson = {"title": `${boardTitle}`}
-    return newNameJson
+    return {"title": boardTitle}
 }
 
 export function editColumnTitleTemplate(columnTitle) {
