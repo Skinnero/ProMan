@@ -2,33 +2,31 @@ from data_manager.db_connection import CURSOR
 from data_manager.columns import create_default_columns
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
 
-def get_one(id:str):
-    """Get board by it's id
+
+def get_one(board_id: int):
+    """Get board by its id
 
     Args:
-        id (str): board id from endpoint
+        board_id (int): board id from endpoint
 
     Returns:
         RealDictRow: dict with keys, {name, private, user_id}
-    """    
-    try:
-        id = int(id)
-        query = 'SELECT * FROM boards WHERE id = %s'
-        CURSOR.execute(query, [id])
-        return CURSOR.fetchone()
-    except ValueError:
-        return False
+    """
+    query = 'SELECT * FROM boards WHERE id = %s'
+    CURSOR.execute(query, [board_id])
+    return CURSOR.fetchone()
+
 
 def get_all():
     """Gets all boards from DB
 
     Returns:
         list[RealDictRow]: list of dicts with boards values
-    """    
-    # time.sleep(0.2)
+    """
     query = 'SELECT * FROM boards ORDER BY id'
     CURSOR.execute(query)
     return CURSOR.fetchall()
+
 
 def delete_by_id(id:str):
     """Deletes board by it's id
@@ -50,6 +48,7 @@ def delete_by_id(id:str):
         return False , 'ValueError: Passed wrong value'
     except KeyError:
         return False, 'KeyError: Passed wrong key'
+
 
 def add(data:dict):
     """Inserts new board into the table

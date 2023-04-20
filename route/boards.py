@@ -3,6 +3,7 @@ import data_manager.boards as boards
 
 api_boards = Blueprint('api_boards', __name__)
 
+
 @api_boards.route("/api/boards", methods=['GET', 'POST'])
 def manage_all_boards():
     """Manages all boards,
@@ -16,10 +17,11 @@ def manage_all_boards():
         return jsonify(boards.get_all()), 200
     
     elif request.method == 'POST':
-        message = boards.add(request.json)
-        return message, 200
+        response = boards.add(request.json)
+        return response, 200
 
-@api_boards.route("/api/boards/<board_id>", methods=['GET','POST','DELETE','PATCH'])
+
+@api_boards.route("/api/boards/<int:board_id>", methods=['GET','POST','DELETE','PATCH'])
 def manage_single_board(board_id):
     """Manages a single board with <board_id>,
     GET > Returns json with that board id,
@@ -30,7 +32,7 @@ def manage_single_board(board_id):
         board_id (str): board id
 
     Returns:
-        str or json: json when methed GET else feedback, finally status code
+        str or json: json when method GET else feedback, finally status code
     """  
     if request.method == 'GET':
         data = boards.get_one(board_id)
@@ -39,11 +41,11 @@ def manage_single_board(board_id):
         return jsonify(data), 200
     
     elif request.method == 'DELETE':
-        result, message = boards.delete_by_id(board_id)
-        return (message, 200) if result else (message, 404)
+        result, response = boards.delete_by_id(board_id)
+        return (response, 200) if result else (response, 404)
     
     elif request.method == 'PATCH':
-        result, message = boards.update_by_id(board_id, request.json)
-        return (message, 200) if result else (message, 404)
+        result, response = boards.update_by_id(board_id, request.json)
+        return (response, 200) if result else (response, 404)
 
 

@@ -3,32 +3,34 @@ import data_manager.cards as cards
 
 api_cards = Blueprint('api_cards', __name__)
 
-@api_cards.route('/api/columns/<column_id>/cards', methods=['GET', 'POST', 'PATCH'])
+
+@api_cards.route('/api/columns/<int:column_id>/cards', methods=['GET', 'POST', 'PATCH'])
 def manage_all_cards_from_column(column_id):
     """Manages all cards that belong to <column_id> column,
     GET > Returns json with all cards,
     POST > Creates new card for that column,
-    PATCH > Updates a list of cards if necessery
+    PATCH > Updates a list of cards if necessary
 
     Args:
         column_id (str): column id
 
     Returns:
-        str or json: json when methed GET else feedback, finally status code
+        str or json: json when method GET else feedback, finally status code
     """    
     if request.method == 'GET':
-        result, data = cards.get_all_by_column_id(column_id)
-        return (jsonify(data), 200) if result else (data, 404)
+        result, response = cards.get_all_by_column_id(column_id)
+        return (jsonify(response), 200) if result else (response, 404)
     
     elif request.method == 'POST':
-        result, message = cards.add(column_id, request.json)
-        return (message, 200) if result else (message, 404)
+        result, response = cards.add(column_id, request.json)
+        return (response, 200) if result else (response, 404)
     
     elif request.method == 'PATCH':
-        result, message =  cards.segregate(request.json)
-        return (message, 200) if result else (message, 404)
+        result, response = cards.segregate(request.json)
+        return (response, 200) if result else (response, 404)
 
-@api_cards.route('/api/cards/<card_id>', methods=['GET','DELETE','PATCH'])
+
+@api_cards.route('/api/cards/<int:card_id>', methods=['GET', 'DELETE', 'PATCH'])
 def manage_single_card(card_id):
     """Manages a single card with <card_id>,
     GET > Returns json with that card id,
@@ -39,7 +41,7 @@ def manage_single_card(card_id):
         card_id (str): card id
 
     Returns:
-        str or json: json when methed GET else feedback, finally status code
+        str or json: json when method GET else feedback, finally status code
     """  
     if request.method == 'GET':
         data = cards.get_one(card_id)
@@ -48,10 +50,9 @@ def manage_single_card(card_id):
         return jsonify(data), 200
     
     elif request.method == 'DELETE':
-        result, message = cards.delete_by_id(card_id)
-        return (message, 200) if result else (message, 404)
+        result, response = cards.delete_by_id(card_id)
+        return (response, 200) if result else (response, 404)
     
     elif request.method == 'PATCH':
-        result, message = cards.update_by_id(card_id, request.json)
-        return (message, 200) if result else (message, 404)
-
+        result, response = cards.update_by_id(card_id, request.json)
+        return (response, 200) if result else (response, 404)

@@ -12,6 +12,7 @@ app.register_blueprint(api_users)
 
 app.secret_key = b'-_-'
 
+
 @app.route("/")
 def index():
     """Render main page
@@ -21,10 +22,12 @@ def index():
     """    
     return render_template('index.html')
 
+
 def main():
     """Main function
     """    
     app.run(debug=True)
+
 
 if __name__ == '__main__':
     main()

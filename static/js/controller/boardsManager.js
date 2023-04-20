@@ -58,3 +58,4 @@ function editBoardTitle (clickEvent) {
         }}
     )
 }
+
