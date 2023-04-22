@@ -3,4 +3,5 @@
 .env
 __pycache__
 venv
-static/xd
+static/js/node_modules
+static/js/dist
