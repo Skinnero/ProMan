@@ -47,8 +47,8 @@ ALTER TABLE ONLY cards ADD CONSTRAINT fk_column_id FOREIGN KEY (column_id) REFER
 
 -- MOCK DATA
 INSERT INTO users(name, password) VALUES ('Kacper','xD');
-INSERT INTO users(name, password) VALUES ('Tomek','xD');
-INSERT INTO users(name, password) VALUES ('Eden','xD');
+INSERT INTO users(name, password) VALUES ('asd','$2b$12$qDUfEPjccQmjeNre2VmRWOgN9RSiqxPniVmsaAQXvAEsRaXlC5Fbi');
+INSERT INTO users(name, password) VALUES ('qwe','$2b$12$b123XnZVPyLLVscnM4x/ouyiiOVpQ21NyeenfQ9sjnjEzI4Cual.e');
 
 INSERT INTO boards(title, user_id) VALUES ('project',1);
 INSERT INTO boards(title, user_id) VALUES ('test',2);

@@ -6,19 +6,3 @@ function init(){
 }
 
 init()
-
-async function test(){
-    const token = localStorage.getItem('jwt')
-    let res = await fetch("/private",
-        {
-        method: 'GET',
-        headers: {
-        'Authorization': 'Bearer ' + token
-        }}
-    )
-    res = await res.json()
-    console.log(res)
-}
-
-await test()
-

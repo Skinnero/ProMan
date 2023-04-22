@@ -10,22 +10,27 @@
         <link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
         <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-        <script src="{{ url_for('static', filename='node_modules/socket.io/client-dist/socket.io.js')}}"></script>
-        <script type="module" src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+        <script type="module" src="{{ url_for('static', filename='js/dist/bundle.js') }}" defer></script>
     </head>
     <body>
         <div id="nav">
-            <button style="padding-left: 15%;"><a href="/private"> Home</a></button>
-            <button id="signup" style="float: right; padding-right: 15%;">Sign up</button>
-            <button id="login" style="float: right;">Log in</button>
+            <button style="padding-left: 15%;">Home</button>
+            {% if not user %}
+                <button id="signup" style="float: right; padding-right: 15%;">Sign up</button>
+                <button id="login" style="float: right;">Log in</button>
+            {% else %}
+                <button id="logout" style="float: right; padding-right: 15%;">Logout</button>
+            {% endif %}
         </div>
     <div id="left-panel">
         <button id="create-board">Create Board</button>
         {% for board in boards %}
+            {% if board['user_id'] == user['id'] or board['private'] == false%}
             <div class="board-management" data-id="{{ board.id }}">
                 <button class="show-board" data-id="{{ board.id }}">{{ board.title }}</button>
                 <button class="delete-board" data-id="{{ board.id }}">-</button>
             </div>
+            {% endif %}
         {% endfor %}
     </div>
     </body>

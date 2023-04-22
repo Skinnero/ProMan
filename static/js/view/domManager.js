@@ -7,6 +7,7 @@ import * as cardsHandler from '../data_handler/cards.js'
 import * as usersManager from '../controller/usersManager.js'
 import * as usersHandler from '../data_handler/users.js'
 import {socket} from '../websocket.js'
+import {logInUser} from "../data_handler/users.js";
 // TODO: Refactor all event listeners for a better clarity
 
 export async function setBoardsButtons(){
@@ -211,68 +212,82 @@ export function setUsersDom(){
 
     function setLogInButton(){
         const logInButton = document.getElementById('login')
-        logInButton.addEventListener('click', () => {
-            const modal = document.getElementsByClassName('modal')[0]
-            modal.style.display = 'block'
-            usersManager.getLogIn()
-            window.onclick = (e) => {
-                if (e.target == modal){
+        if (logInButton) {
+            logInButton.addEventListener('click', () => {
+                const modal = document.getElementsByClassName('modal')[0]
+                modal.style.display = 'block'
+                usersManager.getLogIn()
+                window.onclick = (e) => {
+                    if (e.target == modal) {
+                        modal.style.display = 'none'
+                    }
+                }
+            })
+            document.getElementsByTagName('form')[0].addEventListener('submit', async (e) => {
+                e.preventDefault()
+                const modalContent = document.getElementsByClassName('modal-content')[0]
+                const modal = document.getElementsByClassName('modal')[0]
+                const inputs = document.querySelectorAll('form input')
+                const userData = {name: inputs[0].value, password: inputs[1].value}
+                if (await usersHandler.logInUser(userData)) {
                     modal.style.display = 'none'
-                }
-            }
-        })
-        document.getElementsByTagName('form')[0].addEventListener('submit', async (e) => {
-            e.preventDefault()
-            const modalContent = document.getElementsByClassName('modal-content')[0]
-            const modal = document.getElementsByClassName('modal')[0]
-            const inputs = document.querySelectorAll('form input')
-            const userData = {name: inputs[0].value, password: inputs[1].value}
-            if (await usersHandler.logInUser(userData)){
-                modal.style.display = 'none'
-                // window.location = '/'
-            } else {
-                if (document.querySelectorAll('.modal-content p')[0]){
-                    document.querySelectorAll('.modal-content p')[0].innerHTML = "Wrong Username or Password!"
+                    window.location = '/'
                 } else {
-                    const p  = document.createElement('p')
-                    p.innerHTML = "Wrong Username or Password!"
-                    modalContent.insertBefore(p, modalContent.firstChild)
+                    if (document.querySelectorAll('.modal-content p')[0]) {
+                        document.querySelectorAll('.modal-content p')[0].innerHTML = "Wrong Username or Password!"
+                    } else {
+                        const p = document.createElement('p')
+                        p.innerHTML = "Wrong Username or Password!"
+                        modalContent.insertBefore(p, modalContent.firstChild)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     function setSignUpButton(){
         const signUpButton = document.getElementById('signup')
-        signUpButton.addEventListener('click', () => {
-            const modal = document.getElementsByClassName('modal')[1]
-            modal.style.display = 'block'
-            usersManager.getSignUp()
-            window.onclick = (e) => {
-                if (e.target == modal){
+        if (signUpButton) {
+            signUpButton.addEventListener('click', () => {
+                const modal = document.getElementsByClassName('modal')[1]
+                modal.style.display = 'block'
+                usersManager.getSignUp()
+                window.onclick = (e) => {
+                    if (e.target == modal) {
+                        modal.style.display = 'none'
+                    }
+                }
+            })
+            document.getElementsByTagName('form')[1].addEventListener('submit', async (e) => {
+                e.preventDefault()
+                const modalContent = document.getElementsByClassName('modal-content')[1]
+                const modal = document.getElementsByClassName('modal')[1]
+                const inputs = document.querySelectorAll('form input')
+                const userData = {name: inputs[2].value, password: inputs[3].value}
+                if (await usersHandler.singUpUser(userData)) {
                     modal.style.display = 'none'
-                }
-            }
-        })
-        document.getElementsByTagName('form')[1].addEventListener('submit', async (e) => {
-            e.preventDefault()
-            const modalContent = document.getElementsByClassName('modal-content')[1]
-            const modal = document.getElementsByClassName('modal')[1]
-            const inputs = document.querySelectorAll('form input')
-            const userData = {name: inputs[2].value, password: inputs[3].value}
-            if (await usersHandler.singUpUser(userData)){
-                modal.style.display = 'none'
-                window.location = '/'
-            } else {
-                if (document.querySelectorAll('.modal-content p')[0]){
-                    document.querySelectorAll('.modal-content p')[0].innerHTML = "User with that name already exist"
+                    window.location = '/'
                 } else {
-                    const p  = document.createElement('p')
-                    p.innerHTML = "User with that name already exist"
-                    modalContent.insertBefore(p, modalContent.firstChild)
+                    if (document.querySelectorAll('.modal-content p')[0]) {
+                        document.querySelectorAll('.modal-content p')[0].innerHTML = "User with that name already exist"
+                    } else {
+                        const p = document.createElement('p')
+                        p.innerHTML = "User with that name already exist"
+                        modalContent.insertBefore(p, modalContent.firstChild)
+                    }
                 }
-            }
-        })
+            })
+        }
+    }
+    function setLogOutButton() {
+        const logOutButton = document.getElementById('logout')
+        if (logOutButton){
+            logOutButton.addEventListener('click', async () => {
+                await usersHandler.logOutUser()
+                window.location = '/'
+            })
+        }
     }
     setLogInButton()
     setSignUpButton()
+    setLogOutButton()
 }

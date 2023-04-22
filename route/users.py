@@ -1,5 +1,5 @@
-from flask import Blueprint, request, redirect, url_for, jsonify
-from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies
+from flask import Blueprint, request, redirect, url_for, jsonify, make_response
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies
 import data_handler.users as users
 from util import hash_user_password, compare_password
 
@@ -18,9 +18,10 @@ def sing_up():
         data['password'] = hash_user_password(data['password'])
         result, response = users.add(data)
         if result:
-            response = jsonify({"msg": 'Login successful'})
-            access_token = create_access_token(identity=users.get_by_name(data['name']))
-            return jsonify(access_token=access_token)
+            access_token = create_access_token(identity=str(data['name']))
+            resp = make_response()
+            set_access_cookies(resp, access_token)
+            return resp
         return response, 404
     except KeyError:
         return 'KeyError: Passed wrong key', 404
@@ -39,10 +40,10 @@ def log_in():
     try:
         user_password = users.get_password_by_name(data['name'])
         if compare_password(data['password'], user_password['password']):
-            response = jsonify({"msg": 'Login successful'})
             access_token = create_access_token(identity=users.get_by_name(data['name']))
-            print(set_access_cookies(response, access_token))
-            return jsonify(access_token=access_token)
+            resp = make_response()
+            set_access_cookies(resp, access_token)
+            return resp
         return 'Name or password incorrect', 404
     except KeyError:
         return 'KeyError: Passed wrong key', 404
@@ -55,5 +56,6 @@ def log_out():
     Returns:
         redirect: goes back to index website
     """
-    unset_access_cookies(jsonify({"msg": 'Logout successful'}))
-    return redirect(url_for('index'))
+    resp = make_response({"msg": "User logged out"})
+    unset_jwt_cookies(resp)
+    return resp
