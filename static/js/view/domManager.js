@@ -11,7 +11,7 @@ import {logInUser} from "../data_handler/users.js";
 // TODO: Refactor all event listeners for a better clarity
 
 export async function setBoardsButtons(){
-    let boardOnMainPage
+    let boardOnMainPage = {}
 
     function setDeleteBoardButtons(button){
         const eventHandler = (button) => {
@@ -60,6 +60,9 @@ export async function setBoardsButtons(){
 
     function setShowBoardButton(button){
         const eventHandler = async (e, showButtons) => {
+            if (boardOnMainPage.hasOwnProperty('id')){
+                socket.emit('leave', boardOnMainPage.id)
+            }
             boardOnMainPage = await boardsHandler.getBoard(e.target.dataset.id)
             boardsManager.setBoardOnMainPage(boardOnMainPage)
             await columnsManager.setColumns(boardOnMainPage)
@@ -121,6 +124,7 @@ function setColumnsDom(board){
             newColumn = columnsManager.addSingleColumn(newColumn)
             deleteColumn(newColumn.getElementsByClassName('delete-column')[0])
             editTitle(newColumn.getElementsByTagName('textarea')[0])
+            socket.emit('create_column', newColumn.outerHTML)
             const createCardButton = cardsManager.setCardsOnSingleColumn(newColumn)
             cardsDom.createCard(createCardButton.getElementsByClassName('create-card')[0])
         })
