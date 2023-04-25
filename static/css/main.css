@@ -7,7 +7,8 @@ body {
 }
 .board {
     background: #1c1c1c;
-    margin-left: auto;
+    left: 45%;
+    margin-left: 17.5%;
     margin-right: auto;
     margin-top: 10px;
     margin-bottom: 10px;
@@ -70,6 +71,11 @@ button:hover {
     background-color: #fff;
     transition: 1s;
   }
+h5 {
+    color: #fff;
+    left: 0;
+    display: flex;
+}
 
 h4 {
     color: #fff;
@@ -96,4 +102,41 @@ input {
     border: none;
     justify-content: center;
     align-items: center;
+}
+
+header {
+    border: 3px solid #ff2770;
+    width: 100%;
+    height: 7%;
+    background: rgb(40, 45, 52);
+}
+
+nav {
+    border: 3px solid #ff2770;
+    position: absolute;
+    top: 7%;
+    bottom: 100%;
+    height: 100%;
+    width: 15%;
+    background: rgb(40, 45, 52);
+    overflow: hidden;
+}
+
+.sidebar{
+    list-style: none;
+    margin: 0px;
+    padding: 2%;
+}
+
+li {
+    left: 0;
+    cursor: pointer;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin: 0px;
+}
+
+li:hover {
+    background: rgb(78, 82, 89);
+    transition: 1s;
 }

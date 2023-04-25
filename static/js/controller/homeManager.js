@@ -3,13 +3,16 @@ import {domManager} from "../view/domManager.js";
 import { createBoard } from "./boardsManager.js";
 
 
-export function createBoardButton () {
-    const buttonBuilder = htmlFactory(htmlTemplates.newBoardButton);
-    const content = buttonBuilder();
+export function menuBuilder () {
+    const navbarBuilder = htmlFactory(htmlTemplates.navbarBuilder)
+    let content = navbarBuilder();
+    domManager.addChild("#root", content)
+    const sidebarBuilder = htmlFactory(htmlTemplates.sidebarBuilder);
+    content = sidebarBuilder();
     domManager.addChild("#root", content);
     domManager.addEventListener(
-        `.create-board-button`,
-        "click",
-        createBoard
-    )
+      `li[data-id='createBoard']`,
+      "click",
+      createBoard
+  )
   }

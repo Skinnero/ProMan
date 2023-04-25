@@ -1,9 +1,9 @@
 import {dataHandler,apiPost, apiPatch, apiDelete} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
-import {columnsManager, createNewColumn} from "./columnsManager.js";
+import { columnsManager } from "./columnsManager.js";
 import { editBoardTitleTemplate, createBoardTemplate } from "../data/dataTemplates.js";
-import { createBoardButton } from "./homeManager.js";
+import { menuBuilder } from "./homeManager.js";
 
 
 
@@ -11,55 +11,54 @@ export let boardsManager = {
     // Load boards
     loadBoards: async function (boardId) {
         const boards = await dataHandler.getBoards();
-        createBoardButton()
-        createBoards(boards)
+        menuBuilder()
+        createNavbarContent(boards)
     }
 };
 
 
-function createBoards(boards) {
-    // Create board for every board and add functionality
+function createNavbarContent(boards) {
     for (let board of boards) {
-        const boardBuilder = htmlFactory(htmlTemplates.board);
-        const content = boardBuilder(board);
-        domManager.addChild("#root", content);
-        hideStartingButtons(board.id)
-        addListeners(board.id)
+        const sidebardElementBuilder = htmlFactory(htmlTemplates.sidebardElementBuilder)
+        let content = sidebardElementBuilder(board.title, board.id)
+        domManager.addChild(".sidebar", content);
+        addNavbarListeners(board.id)
     }
+}
+
+async function buildBoard(demandId) {
+    let boards = await dataHandler.getBoards();
+    for (let board of boards) {
+        if(board.id == demandId) {
+            const boardBuilder = htmlFactory(htmlTemplates.board);
+            const content = boardBuilder(board);
+            domManager.addChild("#root", content);
+            columnsManager.loadColumns(board.id);
+            addListeners(board.id)
+        }
+    }
+}
+
+function addNavbarListeners(boardId) {
+    domManager.addEventListener(
+        `li[data-id="${boardId}"]`,
+        "click",
+        showBoard
+    );
 }
 
 function addListeners (boardId) {
     //Add event listeners for board buttons
-    domManager.addEventListener(
-        `.show-board-button[data-board-id="${boardId}"]`,
-        "click",
-        showButtonHandler
-    );
     domManager.addEventListener(
         `h3[data-id="${boardId}"]`,
         "click",
         editBoardTitle
     );
     domManager.addEventListener(
-        `.hide-board-button[data-board-id="${boardId}"]`,
-        "click",
-        () => hideBoard(boardId)
-    );
-    domManager.addEventListener(
         `.delete-board[data-delete-board-id="${boardId}"]`,
         "click",
         () => deleteBoard(boardId)
     )
-}
-
-function showButtonHandler(clickEvent) {
-    //Show content of board
-    const boardId = clickEvent.target.dataset.boardId;
-    columnsManager.loadColumns(boardId);
-    clickEvent.target.style.display = "none"
-    document.querySelector(`button[data-delete-board-id='${boardId}']`).style.display=''
-    document.querySelector(`button[data-new-column-board-id='${boardId}']`).style.display=''
-    document.querySelector(`.hide-board-button[data-board-id='${boardId}']`).style.display=''
 }
 
 function editBoardTitle (clickEvent) {
@@ -78,29 +77,32 @@ function editBoardTitle (clickEvent) {
     );
 }
 
-function hideStartingButtons(boardId) {
-    document.querySelector(`button[data-delete-board-id='${boardId}']`).style.display='None'
-    document.querySelector(`button[data-new-column-board-id='${boardId}']`).style.display='None'
-    document.querySelector(`.hide-board-button[data-board-id='${boardId}']`).style.display='None'
-}
-
-function hideBoard(boardId) {
-    const columns = document.querySelectorAll(`.column[data-board-id='${boardId}']`)
-    columns.forEach(column => {column.remove()});
-    document.querySelector(`button[data-delete-board-id='${boardId}']`).style.display='None'
-    document.querySelector(`button[data-new-column-board-id='${boardId}']`).style.display='None'
-    document.querySelector(`.hide-board-button[data-board-id='${boardId}']`).style.display='None'
-    document.querySelector(`.show-board-button[data-board-id='${boardId}']`).style.display=''
-}
-
 async function deleteBoard (boardId) {
     await apiDelete(`/api/boards/${boardId}`)
     document.querySelector(`.board[data-board-id='${boardId}']`).remove()
+    document.querySelector(`li[data-id='${boardId}']`).remove()
 }
 
 export async function createBoard() {
     let boardName = prompt("Enter board name.")
     await apiPost("/api/boards", createBoardTemplate(boardName))
-    const board = await dataHandler.getBoards();
-    createBoards([board[board.length-1]])   
+    let boards = await dataHandler.getBoards();
+    let newBoard = boards[boards.length - 1];
+    const sidebardElementBuilder = htmlFactory(htmlTemplates.sidebardElementBuilder)
+    let content = sidebardElementBuilder(newBoard.title, newBoard.id)
+    domManager.addChild(".sidebar", content);
+    domManager.addEventListener(
+        `li[data-id="${newBoard.id}"]`,
+        "click",
+        showBoard
+    );
+}
+
+function showBoard(clickEvent) {
+    const demandId = clickEvent.target.dataset.id;
+    const oldBoard = document.querySelector(".board")
+    if (oldBoard != null) {
+        oldBoard.remove()
+    }
+    buildBoard(demandId)
 }
