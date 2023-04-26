@@ -42,6 +42,7 @@ function dragAndDrop(cardId) {
 }
 
 function editCardTitle (clickEvent) {
+    console.log('xD');
     const cardTitle = clickEvent.target;
     const input = document.createElement("input")
     let cardId = clickEvent.target.dataset.id

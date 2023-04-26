@@ -4,6 +4,7 @@ import {domManager} from "../view/domManager.js";
 import { columnsManager } from "./columnsManager.js";
 import { editBoardTitleTemplate, createBoardTemplate } from "../data/dataTemplates.js";
 import { menuBuilder } from "./homeManager.js";
+import { socket } from "./websocketsManager.js";
 
 
 
@@ -15,7 +16,6 @@ export let boardsManager = {
         createNavbarContent(boards)
     }
 };
-
 
 function createNavbarContent(boards) {
     for (let board of boards) {
@@ -70,6 +70,7 @@ function editBoardTitle (clickEvent) {
     input.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
           const newTitle = input.value;
+          socket.emit('update_board_title', newTitle)
           input.replaceWith(boardTitle);
           boardTitle.innerText = newTitle;
           apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
@@ -101,7 +102,9 @@ export async function createBoard() {
 function showBoard(clickEvent) {
     const demandId = clickEvent.target.dataset.id;
     const oldBoard = document.querySelector(".board")
+    socket.emit('join', demandId)
     if (oldBoard != null) {
+        socket.emit('leave', oldBoard.dataset.id)
         oldBoard.remove()
     }
     buildBoard(demandId)
