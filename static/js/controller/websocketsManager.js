@@ -6,6 +6,10 @@ socket.on('update_board_title', (boardTitle) => {
     //script
 })
 
+socket.on('delete_board', () => {
+    //script
+})
+
 socket.on('update_column_title', (columnTitle) => {
     // Script
 })
