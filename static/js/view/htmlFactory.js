@@ -3,6 +3,9 @@ export const htmlTemplates = {
     column: 2,
     card: 3,
     buttonBuilder: 4,
+    navbarBuilder: 5,
+    sidebarBuilder: 6,
+    sidebardElementBuilder: 7,
 }
 
 export const builderFunctions = {
@@ -10,6 +13,9 @@ export const builderFunctions = {
     [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
     [htmlTemplates.newBoardButton]: buttonBuilder,
+    [htmlTemplates.navbarBuilder]: navbarBuilder,
+    [htmlTemplates.sidebarBuilder]: sidebarBuilder,
+    [htmlTemplates.sidebardElementBuilder]: sidebardElementBuilder,
 };
 
 export function htmlFactory(template) {
@@ -34,8 +40,6 @@ function boardBuilder(board) {
                 <div class="board-buttons">
                     <button class="create-new-column" data-new-column-board-id=${board.id}>Create new column</button>
                     <button class="delete-board" data-delete-board-id=${board.id}>Delete board</button>
-                    <button class="show-board-button" data-board-id="${board.id}">Show board</button>
-                    <button class="hide-board-button" data-board-id="${board.id}">Hide board</button>
                 </div>
             </div>`;
 }
@@ -68,3 +72,31 @@ function cardBuilder(card) {
 function buttonBuilder() {
     return `<button class="create-board-button">Create Board</button>`;
   }
+
+function navbarBuilder() {
+    return `<header>
+                <a style="color: white;">Login</a>
+                <input class="login" style="background: white;"></input>
+                <a style="color: white;">Password</a>
+                <input class="password" style="background: white;"></input>
+                <button class="login">Login</button>
+                <button class="logout">Logout</button>
+                <button class="register">Register</button>
+            </header>`
+}
+
+function sidebarBuilder() {
+    return `<nav>
+                <ul class="sidebar">
+                    <li data-id="createBoard">
+                        <h5>Create new board</h5>
+                    </li>
+                </ul>
+            </nav>`
+}
+
+function sidebardElementBuilder(boardName, boardId) {
+    return `<li data-id="${boardId}">
+                <h5 data-id="${boardId}">${boardName}</h5>
+            </li>`
+}

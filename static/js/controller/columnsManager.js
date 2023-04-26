@@ -51,6 +51,14 @@ function addColumnListeners(columnId, boardId) {
         `.create-new-card[column-id="${columnId}"]`,
         "click",
         () => createNewCard(columnId));
+    dragAndDrop(columnId)
+}
+
+function dragAndDrop(columnId) {
+    const cardElement = document.querySelector(`.column[data-id="${columnId}"]`);
+    cardElement.draggable = true;
+    cardElement.addEventListener("dragstart", dragStartHandler);
+    cardElement.addEventListener("dragend", dragEndHandler);
 }
 
 function editColumnTitle (clickEvent) {
@@ -92,4 +100,13 @@ function dropHandler(event) {
 
 function dragOverHandler(event) {
     event.preventDefault();
+}
+
+function dragStartHandler(event) {
+    const cardElement = event.target;
+    event.dataTransfer.setData("text/plain", cardElement.dataset.cardId);
+}
+
+function dragEndHandler(event) {
+    const cardElement = event.target;
 }

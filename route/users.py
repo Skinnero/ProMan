@@ -1,5 +1,5 @@
 from flask import Blueprint, request, session, redirect, url_for, jsonify, make_response
-from flask_jwt_extended import create_access_token, set_access_cookies, unset_access_cookies
+from flask_jwt_extended import create_access_token, set_access_cookies, unset_jwt_cookies
 import data_handler.users as users
 from util import hash_user_password, compare_password
 
@@ -17,8 +17,8 @@ def sing_up():
     data['password'] = hash_user_password(data['password'])
     result, response = users.add(data)
     if result:
-        response = make_response({"msg": "User Created Successfully"})
         access_token = create_access_token(identity=users.get_by_name(data['name']))
+        response = make_response()
         set_access_cookies(response, access_token)
         return response
     return response, 404
@@ -35,8 +35,8 @@ def log_in():
     data = request.json
     user_password = users.get_password_by_name(data['name'])
     if compare_password(data['password'], user_password['password']):
-        response = make_response({"msg": 'User logged in!'})
         access_token = create_access_token(identity=users.get_by_name(data['name']))
+        response = make_response()
         set_access_cookies(response, access_token)
         return response
     return 'Name or password incorrect', 404
@@ -49,6 +49,6 @@ def log_out():
     Returns:
         redirect: goes back to index website
     """
-    response = make_response({"msg": "Cookies has been cleared"})
-    unset_access_cookies(response)
+    response = make_response()
+    unset_jwt_cookies(response)
     return response
