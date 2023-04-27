@@ -65,7 +65,6 @@ function editColumnTitle (clickEvent) {
     const boardTitle = clickEvent.target;
     const input = document.createElement("input")
     const columnId = clickEvent.target.dataset.id
-    console.log(columnId)
     input.value = boardTitle.innerText;
     boardTitle.replaceWith(input);
     input.addEventListener("keydown", function(event) {
@@ -75,7 +74,7 @@ function editColumnTitle (clickEvent) {
           boardTitle.innerText = newTitle;
           apiPatch(`/api/columns/${columnId}`, editColumnTitleTemplate(newTitle))
         }}
-    );
+    )
 }
 
 export async function createNewColumn (boardId) {

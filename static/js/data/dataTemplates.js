@@ -15,7 +15,6 @@ export function editCardTitleTemplate(cardTitle) {
     let newNameJson = {"title": `${cardTitle}`}
     return newNameJson
 }
-
 export function createCardTemplate(cardTitle, columnId) {
     let newCartJson = {"title": `${cardTitle}`,
                        "column_id": `${columnId}`}

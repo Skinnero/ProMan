@@ -16,7 +16,6 @@ export let boardsManager = {
     }
 };
 
-
 function createNavbarContent(boards) {
     for (let board of boards) {
         const sidebardElementBuilder = htmlFactory(htmlTemplates.sidebardElementBuilder)
