@@ -10,9 +10,14 @@ export function menuBuilder () {
     const sidebarBuilder = htmlFactory(htmlTemplates.sidebarBuilder);
     content = sidebarBuilder();
     domManager.addChild("#root", content);
-    domManager.addEventListener(
-      `li[data-id='createBoard']`,
-      "click",
-      createBoard
-  )
+
   }
+
+function menuListeners () {
+  domManager.addEventListener(
+    `li[data-id='createBoard']`,
+    "click",
+    createBoard
+)
+
+}

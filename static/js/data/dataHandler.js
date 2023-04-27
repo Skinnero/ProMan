@@ -35,6 +35,8 @@ async function apiGet(url) {
     });
     if (response.ok) {
         return await response.json();
+    } else {
+        return false
     }
 }
 

@@ -6,11 +6,13 @@ import { editCardTitleTemplate, createCardTemplate } from "../data/dataTemplates
 export let cardsManager = {
     loadCards: async function (columnId, boardId) {
         const cards = await dataHandler.getCardsByBoardId(columnId);
-        buildCarts(cards, columnId)
+        if (cards) {
+            buildCards(cards, columnId)
+        }
     },
 };
 
-function buildCarts(cards, columnId) {
+function buildCards(cards, columnId) {
     for (let card of cards) {
         if (columnId == card.column_id) {
             const cardBuilder = htmlFactory(htmlTemplates.card);
