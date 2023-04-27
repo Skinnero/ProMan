@@ -3,5 +3,3 @@
 .env
 __pycache__
 venv
-static/js/node_modules
-static/js/dist

@@ -1,6 +1,5 @@
-from data_handler.db_connection import CURSOR
+from data_manager.db_connection import CURSOR
 from psycopg2.errors import UniqueViolation
-
 
 def add(data:dict):
     """Inserts into db a new user
@@ -9,7 +8,7 @@ def add(data:dict):
         data (dict): dict with keys, {name, password}
 
     Returns:
-        bool and str: true if success else false, finally feedback
+        bool and str: true if succes else false, finally feedback
     """    
     try:
         data = [data['name'], data['password']]
@@ -20,8 +19,7 @@ def add(data:dict):
         return False, 'KeyError: Passed wrong key'
     except UniqueViolation:
         return False, 'UniqueViolation: User with this name already exist'
-
-
+    
 def get_by_name(name:str):
     """Gets user id and name and returns it
 
