@@ -12,18 +12,9 @@ export let boardsManager = {
     loadBoards: async function (boardId) {
         const boards = await dataHandler.getBoards();
         menuBuilder()
-        createNavbarContent(boards)
+        addShowBoardListeners(boardId)
     }
 };
-
-function createNavbarContent(boards) {
-    for (let board of boards) {
-        const sidebardElementBuilder = htmlFactory(htmlTemplates.sidebardElementBuilder)
-        let content = sidebardElementBuilder(board.title, board.id)
-        domManager.addChild(".sidebar", content);
-        addNavbarListeners(board.id)
-    }
-}
 
 async function buildBoard(demandId) {
     let boards = await dataHandler.getBoards();
@@ -38,12 +29,15 @@ async function buildBoard(demandId) {
     }
 }
 
-function addNavbarListeners(boardId) {
-    domManager.addEventListener(
-        `li[data-id="${boardId}"]`,
-        "click",
-        showBoard
-    );
+function addShowBoardListeners(boardId) {
+    let elements = document.querySelectorAll('.sidebar-board')
+    for (let element of elements) {
+        domManager.addEventListener(
+            `.sidebar-board[data-id="${element.dataset.id}"]`,
+            "click",
+            showBoard
+        )
+    }
 }
 
 function addListeners (boardId) {
@@ -83,6 +77,7 @@ async function deleteBoard (boardId) {
 }
 
 export async function createBoard() {
+    // TODO: modal
     let boardName = prompt("Enter board name.")
     await apiPost("/api/boards", createBoardTemplate(boardName))
     let boards = await dataHandler.getBoards();

@@ -1,5 +1,6 @@
 export function createBoardTemplate(boardName) {
-    return {"title": boardName}
+    return {"title": boardName,
+            "user_id": 1}
 }
 
 export function editBoardTitleTemplate(boardTitle) {
@@ -35,4 +36,16 @@ export function deleteBoardTemplate(boardId) {
 export function deleteColumnTemplate(columnId) {
     let newBoardJson = {"boardname": `${columnId}`}
     return newBoardJson
+}
+
+export function loginTemplate(login, password) {
+    let loginJson = {"name": `${login}`,
+                        "password": `${password}`}
+    return loginJson
+}
+
+export function registerTemplate(login, password) {
+    let registerJson = {"name": `${login}`,
+                        "password": `${password}`}
+    return registerJson
 }

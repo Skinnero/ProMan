@@ -20,13 +20,14 @@ jwt = JWTManager(app)
 
 
 @app.route("/")
+@jwt_required(optional=True)
 def index():
     """Render main page
 
     Returns:
         render_template: index.html
     """
-    return render_template('index.html', boards=get_all())
+    return render_template('index.html', boards=get_all(), user=get_jwt_identity())
 
 
 @app.route('/private', methods=["GET"])

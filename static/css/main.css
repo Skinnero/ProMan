@@ -100,8 +100,7 @@ h3 {
 }
 
 input {
-    color: #fff;
-    background-color: transparent;
+    color: rgb(78, 82, 89);
     border: none;
     justify-content: center;
     align-items: center;

@@ -27,6 +27,10 @@ export let dataHandler = {
     createNewCard: async function (cardTitle, boardId, statusId) {
         // creates new card, saves it and calls the callback function with its data
     },
+    logoutUser: async function () {
+        await fetch('/api/users/log-out', {method:'GET'})
+        window.location="/"
+    }
 };
 
 async function apiGet(url) {
