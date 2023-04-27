@@ -8,9 +8,10 @@ socket.on('update_board_title', (boardTitle) => {
 
 socket.on('delete_board', () => {
     //script
+    // ??
 })
 
-socket.on('update_column_title', (columnTitle) => {
+socket.on('update_column_title', (columnTitle, columnId) => {
     // Script
 })
 
@@ -20,13 +21,14 @@ socket.on('update_column_position', () => {
 
 socket.on('create_column', (columnDiv) => {
     // Script
+    // Check if div needed or just title and id
 })
 
 socket.on('delete_column', (columnId) => {
     // Script
 })
 
-socket.on('update_card_title', (cardTitle) => {
+socket.on('update_card_title', (cardTitle, cardId) => {
     // Script
 })
 
@@ -36,6 +38,7 @@ socket.on('update_card_position', () => {
 
 socket.on('create_card', (cardDiv) => {
     // Script
+    // Check if div needed or just title and id
 })
 
 socket.on('delete_card', (cardId) => {

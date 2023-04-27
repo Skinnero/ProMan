@@ -5,19 +5,19 @@ ALTER TABLE ONLY cards DROP CONSTRAINT IF EXISTS fk_column_id;
 
 -- CREATE TABLE
 
--- DROP TABLE IF EXISTS users;
--- CREATE TABLE users (
---     id SERIAL PRIMARY KEY NOT NULL,
---     title text UNIQUE NOT NULL,
---     password text NOT NULL
--- );
+DROP TABLE IF EXISTS users;
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name text UNIQUE NOT NULL,
+    password text NOT NULL
+);
 
 DROP TABLE IF EXISTS boards;
 CREATE TABLE boards (
     id SERIAL PRIMARY KEY NOT NULL,
     title text NOT NULL,
-    private bool NOT NULL default true
-    -- user_id INTEGER
+    private bool NOT NULL default true,
+    user_id INTEGER
 );
 
 DROP TABLE IF EXISTS columns;
@@ -46,13 +46,13 @@ ALTER TABLE ONLY columns ADD CONSTRAINT fk_board_id FOREIGN KEY (board_id) REFER
 ALTER TABLE ONLY cards ADD CONSTRAINT fk_column_id FOREIGN KEY (column_id) REFERENCES columns(id) ON DELETE CASCADE;
 
 -- MOCK DATA
--- INSERT INTO users(title, password) VALUES ('Kacper','xD');
--- INSERT INTO users(title, password) VALUES ('Tomek','xD');
--- INSERT INTO users(title, password) VALUES ('Edek','xD');
+INSERT INTO users(name, password) VALUES ('Kacper','xD');
+INSERT INTO users(name, password) VALUES ('asd','$2b$12$qDUfEPjccQmjeNre2VmRWOgN9RSiqxPniVmsaAQXvAEsRaXlC5Fbi');
+INSERT INTO users(name, password) VALUES ('qwe','$2b$12$b123XnZVPyLLVscnM4x/ouyiiOVpQ21NyeenfQ9sjnjEzI4Cual.e');
 
-INSERT INTO boards(title) VALUES ('project');
-INSERT INTO boards(title) VALUES ('test');
-INSERT INTO boards(title) VALUES ('random');
+INSERT INTO boards(title, user_id) VALUES ('project', 1);
+INSERT INTO boards(title, user_id) VALUES ('test', 2);
+INSERT INTO boards(title, user_id) VALUES ('random', 3);
 
 INSERT INTO columns(title, order_number, board_id) VALUES ('To do', 1, 1);
 INSERT INTO columns(title, order_number, board_id) VALUES ('Additional', 2, 1);

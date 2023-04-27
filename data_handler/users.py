@@ -16,8 +16,8 @@ def add(data:dict):
         query = 'INSERT INTO users(name, password) VALUES (%s, %s)'
         CURSOR.execute(query, data)
         return True, 'User created successfully'
-    except KeyError:
-        return False, 'KeyError: Passed wrong key'
+    # except KeyError:
+    #     return False, 'KeyError: Passed wrong key'
     except UniqueViolation:
         return False, 'UniqueViolation: User with this name already exist'
 

@@ -14,6 +14,34 @@
         <script type="module" src="{{ url_for('static', filename='js/dist/bundle.js') }}" defer></script>
     </head>
     <body>
-        <div id="root"></div>
+        <div id="root">
+            <header>
+                {% if user == none %}
+                    <a style="color: white;">Login</a>
+                    <input class="login" style="background: white;"></input>
+                    <a style="color: white;">Password</a>
+                    <input class="password" type="password" style="background: white;"></input>
+                    <button class="login-button">Login</button>
+                    <button class="register-button">Register</button>
+                {% else %}
+                    <button class="logout-button">Logout</button>
+                    <a>{{user['name']}}</a>
+                {% endif%}
+            </header>
+            <nav>
+                <ul class="sidebar">
+                    <li data-id="createBoard">
+                        <h5>Create new board</h5>
+                    </li>
+                    {% for board in boards %}
+                        {% if board['private'] == false or board['user_id'] == user['id'] %}
+                            <li class="sidebar-board" data-id="{{board['id']}}">
+                                <h5 data-id="{{board['id']}}">{{board['title']}}</h5>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </nav>
+        </div>
     </body>
 </html>

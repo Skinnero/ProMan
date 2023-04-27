@@ -48,7 +48,7 @@ def add(board_data: dict):
     Args:
         board_data (dict): dict with key 'name' and 'user_id'
     """
-
+    print(board_data)
     def get_most_recent():
         """Gets most recent added board
 
