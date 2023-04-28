@@ -3,6 +3,7 @@ import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager, createNewCard } from "./cardManager.js";
 import { editColumnTitleTemplate, createColumnTemplate } from "../data/dataTemplates.js";
+import {socket} from "./websocketsManager";
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
@@ -11,7 +12,7 @@ export let columnsManager = {
     },
 };
 
-function buildColumns (columns, boardId) {
+export function buildColumns (columns, boardId) {
     for (let column of columns) {
         if (column.board_id == boardId) {
             const columnBuilder = htmlFactory(htmlTemplates.column);
@@ -72,6 +73,7 @@ function editColumnTitle (clickEvent) {
           const newTitle = input.value;
           input.replaceWith(boardTitle);
           boardTitle.innerText = newTitle;
+          socket.emit('update_column_title', boardTitle.innerText, columnId)
           apiPatch(`/api/columns/${columnId}`, editColumnTitleTemplate(newTitle))
         }}
     )
@@ -81,11 +83,13 @@ export async function createNewColumn (boardId) {
     let columnName = prompt("Enter column name.")
     await apiPost(`/api/boards/${boardId}/columns`, createColumnTemplate(columnName, boardId))
     const columns = await dataHandler.getColumnsByBoardId(boardId);
+    socket.emit('create_column', columns, boardId)
     buildColumns([columns[columns.length - 1]], boardId)
 }
 
 async function deleteColumn (columnId) {
     await apiDelete(`/api/columns/${columnId}`)
+    socket.emit('delete_column', columnId)
     document.querySelector(`.column[data-id='${columnId}']`).remove()
 }
 

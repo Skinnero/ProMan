@@ -1,9 +1,11 @@
 import {io} from "socket.io-client"
+import {buildColumns} from "./columnsManager.js"
+import {buildCards} from "./cardManager.js"
 
 export const socket = io("ws://127.0.0.1:5000")
 
 socket.on('update_board_title', (boardTitle) => {
-    //script
+    document.querySelector('.board-title h3').innerHTML = boardTitle
 })
 
 socket.on('delete_board', () => {
@@ -12,35 +14,33 @@ socket.on('delete_board', () => {
 })
 
 socket.on('update_column_title', (columnTitle, columnId) => {
-    // Script
+    document.querySelector(`[data-id="${columnId}"] .column-title h4`).innerText = columnTitle
 })
 
 socket.on('update_column_position', () => {
     // Script
 })
 
-socket.on('create_column', (columnDiv) => {
-    // Script
-    // Check if div needed or just title and id
+socket.on('create_column', (columnData, boardId) => {
+    buildColumns([columnData[columnData.length - 1]], boardId)
 })
 
 socket.on('delete_column', (columnId) => {
-    // Script
+    document.querySelector(`.column[data-id='${columnId}']`).remove()
 })
 
 socket.on('update_card_title', (cardTitle, cardId) => {
-    // Script
+    document.querySelector(`[data-card-id="${cardId}"] .card-title h4`).innerText = cardTitle
 })
 
 socket.on('update_card_position', () => {
     // Script
 })
 
-socket.on('create_card', (cardDiv) => {
-    // Script
-    // Check if div needed or just title and id
+socket.on('create_card', (cardData, columnId) => {
+    buildCards([cardData[cardData.length - 1]], columnId)
 })
 
 socket.on('delete_card', (cardId) => {
-    // Script
+    document.querySelector(`.card[data-card-id='${cardId}']`).remove()
 })

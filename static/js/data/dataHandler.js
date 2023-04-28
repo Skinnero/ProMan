@@ -46,7 +46,7 @@ async function apiGet(url) {
 
 export async function apiPost(url, payload) {
     await fetch(url, {
-        method:'POST', 
+        method:'POST',
         headers:{
             'Content-Type':'application/json'
         },
@@ -63,7 +63,7 @@ async function apiPut(url) {
 
 export async function apiPatch(url, payload) {
     await fetch(url, {
-        method:'PATCH', 
+        method:'PATCH',
         headers:{
             'Content-Type':'application/json'
         },

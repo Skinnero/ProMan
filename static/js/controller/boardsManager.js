@@ -4,6 +4,7 @@ import {domManager} from "../view/domManager.js";
 import { columnsManager } from "./columnsManager.js";
 import { editBoardTitleTemplate, createBoardTemplate } from "../data/dataTemplates.js";
 import { menuBuilder } from "./homeManager.js";
+import {socket} from "./websocketsManager";
 
 
 
@@ -62,10 +63,11 @@ function editBoardTitle (clickEvent) {
     boardTitle.replaceWith(input);
     input.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
-          const newTitle = input.value;
-          input.replaceWith(boardTitle);
-          boardTitle.innerText = newTitle;
-          apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
+            const newTitle = input.value;
+            input.replaceWith(boardTitle);
+            boardTitle.innerText = newTitle;
+            apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
+            socket.emit('update_board_title', boardTitle.innerText)
         }}
     );
 }
@@ -95,6 +97,10 @@ export async function createBoard() {
 function showBoard(clickEvent) {
     const demandId = clickEvent.target.dataset.id;
     const oldBoard = document.querySelector(".board")
+    socket.emit('join', demandId)
+    if (oldBoard){
+        socket.emit('leave', oldBoard.dataset.boardId)
+    }
     if (oldBoard != null) {
         oldBoard.remove()
     }

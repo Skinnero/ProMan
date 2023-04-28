@@ -2,6 +2,7 @@ import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js"
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { editCardTitleTemplate, createCardTemplate } from "../data/dataTemplates.js";
+import {socket} from "./websocketsManager";
 
 export let cardsManager = {
     loadCards: async function (columnId, boardId) {
@@ -12,7 +13,7 @@ export let cardsManager = {
     },
 };
 
-function buildCards(cards, columnId) {
+export function buildCards(cards, columnId) {
     for (let card of cards) {
         if (columnId == card.column_id) {
             const cardBuilder = htmlFactory(htmlTemplates.card);
@@ -44,7 +45,6 @@ function dragAndDrop(cardId) {
 }
 
 function editCardTitle (clickEvent) {
-    console.log('xD');
     const cardTitle = clickEvent.target;
     const input = document.createElement("input")
     let cardId = clickEvent.target.dataset.id
@@ -53,9 +53,9 @@ function editCardTitle (clickEvent) {
     input.addEventListener("keydown", function(event) {
         if (event.key === "Enter") {
             const newTitle = input.value;
-            console.log(newTitle)
             input.replaceWith(cardTitle);
             cardTitle.innerText = newTitle;
+            socket.emit('update_card_title', cardTitle.innerText, cardId)
             apiPatch(`/api/cards/${cardId}`, editCardTitleTemplate(newTitle))
         }}
     );
@@ -75,6 +75,7 @@ function dragEndHandler(event) {
 
 function deleteCard(cardId) {
     apiDelete(`/api/cards/${cardId}`)
+    socket.emit('delete_card', cardId)
     document.querySelector(`.card[data-card-id='${cardId}']`).remove()
 }
 
@@ -82,5 +83,6 @@ export async function createNewCard (columnId) {
     let cardName = prompt("Enter card name.")
     await apiPost(`/api/columns/${columnId}/cards`, createCardTemplate(cardName,columnId))
     const cards = await dataHandler.getCardsByBoardId(columnId);
-    buildCarts([cards[cards.length - 1]], columnId)
+    socket.emit('create_card', cards, columnId)
+    buildCards([cards[cards.length - 1]], columnId)
 }

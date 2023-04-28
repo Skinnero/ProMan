@@ -1,4 +1,5 @@
--- DROP CONSTRIANS
+-- DROP CONSTRAINS
+
 ALTER TABLE ONLY boards DROP CONSTRAINT IF EXISTS fk_user_id;
 ALTER TABLE ONLY columns DROP CONSTRAINT IF EXISTS fk_board_id;
 ALTER TABLE ONLY cards DROP CONSTRAINT IF EXISTS fk_column_id;
@@ -46,6 +47,7 @@ ALTER TABLE ONLY columns ADD CONSTRAINT fk_board_id FOREIGN KEY (board_id) REFER
 ALTER TABLE ONLY cards ADD CONSTRAINT fk_column_id FOREIGN KEY (column_id) REFERENCES columns(id) ON DELETE CASCADE;
 
 -- MOCK DATA
+
 INSERT INTO users(name, password) VALUES ('Kacper','xD');
 INSERT INTO users(name, password) VALUES ('asd','$2b$12$qDUfEPjccQmjeNre2VmRWOgN9RSiqxPniVmsaAQXvAEsRaXlC5Fbi');
 INSERT INTO users(name, password) VALUES ('qwe','$2b$12$b123XnZVPyLLVscnM4x/ouyiiOVpQ21NyeenfQ9sjnjEzI4Cual.e');
