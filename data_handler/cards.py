@@ -36,9 +36,10 @@ def add(column_id: int, card_data: dict):
         column_id (int): column id
         card_data (dict): dict with key 'name' and 'column_id'
     """
+    from datetime import datetime
     try:
-        data = [card_data['title'], get_new_order_number(column_id), column_id]
-        query = 'INSERT INTO cards(title, order_number, column_id) VALUES (%s, %s, %s)'
+        data = [card_data['title'], get_new_order_number(column_id), column_id, datetime.now()]
+        query = 'INSERT INTO cards(title, order_number, column_id, submission_time) VALUES (%s, %s, %s, %s)'
         CURSOR.execute(query, data)
         return True, 'Card created successfully'
     except (ForeignKeyViolation, InvalidTextRepresentation):
@@ -59,7 +60,7 @@ def delete_by_id(card_id: int):
     # TODO: Order Number of first record
     try:
         card_data = get_one_by_id(card_id)
-        query = 'DELETE FROM cards where id = %s'
+        query = 'UPDATE cards SET archived=true where id = %s'
         CURSOR.execute(query, [card_id])
         sort_out_on_delete(card_data['column_id'], card_data['order_number'])
         return True, 'Card deleted successfully'

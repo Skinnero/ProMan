@@ -76,7 +76,7 @@ function dragEndHandler(event) {
 function deleteCard(cardId) {
     apiDelete(`/api/cards/${cardId}`)
     socket.emit('delete_card', cardId)
-    document.querySelector(`.card[data-card-id='${cardId}']`).remove()
+    document.querySelector(`.card[data-id='${cardId}']`).remove()
 }
 
 export async function createNewCard (columnId) {

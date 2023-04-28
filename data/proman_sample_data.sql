@@ -36,6 +36,7 @@ CREATE TABLE cards (
     title text NOT NULL,
     order_number INTEGER NOT NULL,
     archived bool NOT NULL default false,
+    submission_time timestamp without time zone NOT NULL,
     column_id INTEGER NOT NULL
 );
 
@@ -61,9 +62,9 @@ INSERT INTO columns(title, order_number, board_id) VALUES ('Additional', 2, 1);
 INSERT INTO columns(title, order_number, board_id) VALUES ('Doing', 3, 1);
 INSERT INTO columns(title, order_number, board_id) VALUES ('Done', 4, 1);
 
-INSERT INTO cards(title, order_number, column_id) VALUES ('test1', 1, 1);
-INSERT INTO cards(title, order_number, column_id) VALUES ('test2', 2, 1);
-INSERT INTO cards(title, order_number, column_id) VALUES ('test3', 3, 1);
-INSERT INTO cards(title, order_number, column_id) VALUES ('test4', 4, 1);
-INSERT INTO cards(title, order_number, column_id) VALUES ('test5', 5, 1);
-INSERT INTO cards(title, order_number, column_id) VALUES ('test6', 6, 1);
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test1', 1, 1, '10.10.2010 12:33');
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test2', 2, 1, '10.10.2010 12:33');
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test3', 3, 1, '10.10.2010 12:33');
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test4', 4, 1, '10.10.2010 12:33');
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test5', 5, 1, '10.10.2010 12:33');
+INSERT INTO cards(title, order_number, column_id, submission_time) VALUES ('test6', 6, 1, '10.10.2010 12:33');
