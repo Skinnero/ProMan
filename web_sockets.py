@@ -8,26 +8,23 @@ from __main__ import socketio
 @socketio.on('join')
 def on_join(room_id):
     join_room(room_id)
-    print(rooms())
 
 
 @socketio.on('leave')
 def on_leave(room_id):
     leave_room(room_id)
-    print(rooms())
 
 # BOARDS MANAGEMENT
 
 
 @socketio.on('update_board_title')
 def update_board_title(board_title):
-    print(board_title)
     emit('update_board_title', board_title, skip_sid=request.sid, to=rooms())
 
 
 @socketio.on('delete_board')
-def delete_board_handler():
-    emit('delete_board', skip_sid=request.sid, to=rooms())
+def delete_board_handler(board_id):
+    emit('delete_board', board_id, skip_sid=request.sid, to=rooms())
 
 # COLUMNS MANAGEMENT
 
@@ -56,7 +53,6 @@ def delete_column_handler(column_id):
 
 @socketio.on('update_card_title')
 def update_card_title(card_title, card_id):
-    print()
     emit('update_card_title', (card_title, card_id), skip_sid=request.sid, to=rooms())
 
 

@@ -1,16 +1,15 @@
 import {io} from "socket.io-client"
 import {buildColumns} from "./columnsManager.js"
 import {buildCards} from "./cardManager.js"
-
 export const socket = io("ws://127.0.0.1:5000")
 
 socket.on('update_board_title', (boardTitle) => {
     document.querySelector('.board-title h3').innerHTML = boardTitle
 })
 
-socket.on('delete_board', () => {
-    //script
-    // ??
+socket.on('delete_board', (boardId) => {
+    document.querySelector(`.board[data-board-id='${boardId}']`).remove()
+    document.querySelector(`li[data-id='${boardId}']`).remove()
 })
 
 socket.on('update_column_title', (columnTitle, columnId) => {
@@ -18,7 +17,7 @@ socket.on('update_column_title', (columnTitle, columnId) => {
 })
 
 socket.on('update_column_position', () => {
-    // Script
+    // TODO: SCRIPT
 })
 
 socket.on('create_column', (columnData, boardId) => {
@@ -34,7 +33,7 @@ socket.on('update_card_title', (cardTitle, cardId) => {
 })
 
 socket.on('update_card_position', () => {
-    // Script
+    // TODO: SCRIPT
 })
 
 socket.on('create_card', (cardData, columnId) => {

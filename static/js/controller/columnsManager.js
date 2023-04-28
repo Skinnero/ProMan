@@ -12,18 +12,18 @@ export let columnsManager = {
     },
 };
 
-export function buildColumns (columns, boardId) {
-    for (let column of columns) {
+export async function buildColumns (columns, boardId) {
+    for (const column of columns) {
         if (column.board_id == boardId) {
             const columnBuilder = htmlFactory(htmlTemplates.column);
-            let content = columnBuilder(column, boardId);
-            cardsManager.loadCards(column.id, boardId);
-            domManager.addChild(`.board-content[data-board-id='${boardId}']`, content);
+            const content = columnBuilder(column, boardId);
+            domManager.addChild(`.board-content[data-id='${boardId}']`, content);
+            await cardsManager.loadCards(column.id, boardId);
             addColumnListeners(column.id, boardId)
         }
     }
     domManager.addEventListener(
-        `.create-new-column[data-new-column-board-id="${boardId}"]`,
+        `.create-new-column[data-id="${boardId}"]`,
         "click",
         () => createNewColumn(boardId)
     )
@@ -35,7 +35,7 @@ function addColumnListeners(columnId, boardId) {
         "click",
         editColumnTitle);
     domManager.addEventListener(
-        `.delete-column[column-id="${columnId}"]`,
+        `.delete-column[data-id="${columnId}"]`,
         "click",
         () => deleteColumn(columnId, boardId));
     domManager.addEventListener(
@@ -49,7 +49,7 @@ function addColumnListeners(columnId, boardId) {
         dragOverHandler
     );
     domManager.addEventListener(
-        `.create-new-card[column-id="${columnId}"]`,
+        `.create-new-card[data-id="${columnId}"]`,
         "click",
         () => createNewCard(columnId));
     dragAndDrop(columnId)
@@ -80,7 +80,7 @@ function editColumnTitle (clickEvent) {
 }
 
 export async function createNewColumn (boardId) {
-    let columnName = prompt("Enter column name.")
+    const columnName = prompt("Enter column name.")
     await apiPost(`/api/boards/${boardId}/columns`, createColumnTemplate(columnName, boardId))
     const columns = await dataHandler.getColumnsByBoardId(boardId);
     socket.emit('create_column', columns, boardId)
@@ -98,7 +98,7 @@ function dropHandler(event) {
     const cardId = event.dataTransfer.getData("text/plain");
     const targetColumn = event.currentTarget;
     const targetColumnId = targetColumn.dataset.id;
-    targetColumn.appendChild(document.querySelector(`.card[data-card-id='${cardId}']`));
+    targetColumn.appendChild(document.querySelector(`.card[data-id='${cardId}']`));
     apiPatch(`/api/cards/${cardId}`, { column_id: targetColumnId })
 }
 
@@ -108,7 +108,7 @@ function dragOverHandler(event) {
 
 function dragStartHandler(event) {
     const cardElement = event.target;
-    event.dataTransfer.setData("text/plain", cardElement.dataset.cardId);
+    event.dataTransfer.setData("text/plain", cardElement.dataset.id);
 }
 
 function dragEndHandler(event) {

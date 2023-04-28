@@ -1,6 +1,5 @@
 export function createBoardTemplate(boardName) {
-    return {"title": boardName,
-            "user_id": 1}
+    return {"title": boardName, "user_id": 1}
 }
 
 export function editBoardTitleTemplate(boardTitle) {
@@ -8,44 +7,24 @@ export function editBoardTitleTemplate(boardTitle) {
 }
 
 export function editColumnTitleTemplate(columnTitle) {
-    let newNameJson = {"title": `${columnTitle}`}
-    return newNameJson
+    return  {"title": `${columnTitle}`}
 }
 
 export function editCardTitleTemplate(cardTitle) {
-    let newNameJson = {"title": `${cardTitle}`}
-    return newNameJson
+    return {"title": `${cardTitle}`}
 }
 export function createCardTemplate(cardTitle, columnId) {
-    let newCartJson = {"title": `${cardTitle}`,
-                       "column_id": `${columnId}`}
-    return newCartJson
+    return  {"title": `${cardTitle}`, "column_id": `${columnId}`}
 }
 
 export function createColumnTemplate(columnTitle, boardId) {
-    let newCartJson = {"title": `${columnTitle}`,
-                       "board_id": `${boardId}`}
-    return newCartJson
-}
-
-export function deleteBoardTemplate(boardId) {
-    let newBoardJson = {"boardId": `${boardId}`}
-    return newBoardJson
-}
-
-export function deleteColumnTemplate(columnId) {
-    let newBoardJson = {"boardname": `${columnId}`}
-    return newBoardJson
+    return {"title": `${columnTitle}`, "board_id": `${boardId}`}
 }
 
 export function loginTemplate(login, password) {
-    let loginJson = {"name": `${login}`,
-                        "password": `${password}`}
-    return loginJson
+    return {"name": `${login}`, "password": `${password}`}
 }
 
 export function registerTemplate(login, password) {
-    let registerJson = {"name": `${login}`,
-                        "password": `${password}`}
-    return registerJson
+    return {"name": `${login}`, "password": `${password}`}
 }

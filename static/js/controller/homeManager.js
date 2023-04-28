@@ -4,18 +4,15 @@ import { createBoard } from "./boardsManager.js";
 import { apiPost, dataHandler } from "../data/dataHandler.js";
 import { loginTemplate, registerTemplate } from "../data/dataTemplates.js";
 
-export function menuBuilder () {
-    menuListeners();
+export function menuListeners () {
+    const login = document.querySelector('.login-button')
 
-  }
-
-function menuListeners () {
     domManager.addEventListener(
       `li[data-id='createBoard']`,
       "click",
       createBoard
     )
-    let login = document.querySelector('.login-button')
+
     if (login) {
         domManager.addEventListener(
           `.login-button`,
@@ -41,7 +38,7 @@ async function loginButton() {
     let login = document.querySelector('.login').value
     let password = document.querySelector('.password').value
     await apiPost("/api/users/log-in", loginTemplate(login, password))
-    window.location="/"
+    location.reload()
 }
 
 async function signupButton() {
@@ -49,5 +46,5 @@ async function signupButton() {
     let login = document.querySelector('.login').value
     let password = document.querySelector('.password').value
     await apiPost("/api/users/sign-up", registerTemplate(login, password))
-    window.location="/"
+    location.reload()
 }

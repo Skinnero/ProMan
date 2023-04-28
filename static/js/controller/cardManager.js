@@ -5,7 +5,7 @@ import { editCardTitleTemplate, createCardTemplate } from "../data/dataTemplates
 import {socket} from "./websocketsManager";
 
 export let cardsManager = {
-    loadCards: async function (columnId, boardId) {
+    loadCards: async function (columnId) {
         const cards = await dataHandler.getCardsByBoardId(columnId);
         if (cards) {
             buildCards(cards, columnId)
@@ -14,31 +14,31 @@ export let cardsManager = {
 };
 
 export function buildCards(cards, columnId) {
-    for (let card of cards) {
+    for (const card of cards) {
         if (columnId == card.column_id) {
             const cardBuilder = htmlFactory(htmlTemplates.card);
-            let  content = cardBuilder(card);
+            const content = cardBuilder(card);
             domManager.addChild(`.column-content[data-id="${columnId}"]`, content);
-            addCartListeners(card.id)
+            addCardListeners(card.id)
         }
     }
 }
 
-function addCartListeners(cardId){
+function addCardListeners(cardId){
     domManager.addEventListener(
         `h4[data-id="${cardId}"]`,
         "click",
         editCardTitle
     );
     domManager.addEventListener(
-        `.delete-card[card-id="${cardId}"]`,
+        `.delete-card[data-id="${cardId}"]`,
         "click",
         () => deleteCard(cardId))
     dragAndDrop(cardId)
 }
 
 function dragAndDrop(cardId) {
-    const cardElement = document.querySelector(`.card[data-card-id="${cardId}"]`);
+    const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
     cardElement.draggable = true;
     cardElement.addEventListener("dragstart", dragStartHandler);
     cardElement.addEventListener("dragend", dragEndHandler);
@@ -47,7 +47,7 @@ function dragAndDrop(cardId) {
 function editCardTitle (clickEvent) {
     const cardTitle = clickEvent.target;
     const input = document.createElement("input")
-    let cardId = clickEvent.target.dataset.id
+    const cardId = clickEvent.target.dataset.id
     input.value = cardTitle.innerText;
     cardTitle.replaceWith(input);
     input.addEventListener("keydown", function(event) {
@@ -80,7 +80,7 @@ function deleteCard(cardId) {
 }
 
 export async function createNewCard (columnId) {
-    let cardName = prompt("Enter card name.")
+    const cardName = prompt("Enter card name.")
     await apiPost(`/api/columns/${columnId}/cards`, createCardTemplate(cardName,columnId))
     const cards = await dataHandler.getCardsByBoardId(columnId);
     socket.emit('create_card', cards, columnId)

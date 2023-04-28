@@ -35,7 +35,6 @@ CREATE TABLE cards (
     id SERIAL PRIMARY KEY NOT NULL,
     title text NOT NULL,
     order_number INTEGER NOT NULL,
-    completed bool NOT NULL default false,
     archived bool NOT NULL default false,
     column_id INTEGER NOT NULL
 );
@@ -48,13 +47,14 @@ ALTER TABLE ONLY cards ADD CONSTRAINT fk_column_id FOREIGN KEY (column_id) REFER
 
 -- MOCK DATA
 
-INSERT INTO users(name, password) VALUES ('Kacper','xD');
+INSERT INTO users(name, password) VALUES ('zxc','$2b$12$eOqmoJzmZe9z.ydApO3bb.eaq3JovdrzoYDNlq0CFYfDU5uGVc5Um');
 INSERT INTO users(name, password) VALUES ('asd','$2b$12$qDUfEPjccQmjeNre2VmRWOgN9RSiqxPniVmsaAQXvAEsRaXlC5Fbi');
 INSERT INTO users(name, password) VALUES ('qwe','$2b$12$b123XnZVPyLLVscnM4x/ouyiiOVpQ21NyeenfQ9sjnjEzI4Cual.e');
 
 INSERT INTO boards(title, user_id) VALUES ('project', 1);
 INSERT INTO boards(title, user_id) VALUES ('test', 2);
 INSERT INTO boards(title, user_id) VALUES ('random', 3);
+INSERT INTO boards(title, user_id, private) VALUES ('PUBLIC', 1, false);
 
 INSERT INTO columns(title, order_number, board_id) VALUES ('To do', 1, 1);
 INSERT INTO columns(title, order_number, board_id) VALUES ('Additional', 2, 1);
