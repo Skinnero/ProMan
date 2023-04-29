@@ -2,7 +2,7 @@ import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js"
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
 import { cardsManager, createNewCard, addCardListeners } from "./cardManager.js";
-import { editColumnTitleTemplate, createColumnTemplate } from "../data/dataTemplates.js";
+import {editColumnTitleTemplate, createColumnTemplate, editBoardTitleTemplate} from "../data/dataTemplates.js";
 import {socket} from "./websocketsManager";
 
 let dragSource
@@ -34,13 +34,19 @@ export async function buildColumns (columns, boardId) {
 
 function addColumnListeners(columnId) {
     domManager.addEventListener(
-        `h4[data-id="${columnId}"]`,
-        "click",
+        `.column-title[data-id="${columnId}"] textarea`,
+        "mouseup",
         editColumnTitle);
+    domManager.addEventListener(
+        `.column-title[data-id="${columnId}"] textarea`,
+        "mousedown",
+        (e) => {e.preventDefault()}
+    )
     domManager.addEventListener(
         `.delete-column[data-id="${columnId}"]`,
         "click",
-        () => deleteColumn(columnId));
+        () => deleteColumn(columnId)
+    );
     domManager.addEventListener(
         `.column-content[data-id="${columnId}"]`,
         "drop",
@@ -68,18 +74,15 @@ function dragAndDrop() {
 }
 
 function editColumnTitle (clickEvent) {
-    const boardTitle = clickEvent.target;
-    const input = document.createElement("input")
-    const columnId = clickEvent.target.dataset.id
-    input.value = boardTitle.innerText;
-    boardTitle.replaceWith(input);
-    input.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-          const newTitle = input.value;
-          input.replaceWith(boardTitle);
-          boardTitle.innerText = newTitle;
-          socket.emit('update_column_title', boardTitle.innerText, columnId)
-          apiPatch(`/api/columns/${columnId}`, editColumnTitleTemplate(newTitle))
+    clickEvent.target.focus()
+    clickEvent.target.select()
+    const textarea = clickEvent.target;
+    textarea.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            socket.emit('update_column_title', textarea.value, textarea.dataset.id)
+            apiPatch(`/api/columns/${textarea.dataset.id}`, editColumnTitleTemplate(textarea.value))
+            event.target.blur()
         }}
     )
 }

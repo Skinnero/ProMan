@@ -29,7 +29,7 @@ export function htmlFactory(template) {
 function boardBuilder(board) {
     return `<div class="board" data-id=${board.id}>
                 <div class="board-title" data-id=${board.id}>
-                    <h3 data-id=${board.id}>${board.title}</h3>
+                    <textarea data-id=${board.id}>${board.title}</textarea>
                 </div>
                     <div class="board-content" data-id=${board.id}>
                 </div>
@@ -43,7 +43,7 @@ function boardBuilder(board) {
 function columnBuilder(column, boardId) {
     return `<div class="column" data-id="${column.id}" data-board-id="${boardId}">
                 <div class="column-title" data-id="${column.id}">
-                    <h4 data-id=${column.id}>${column.title}</h4>
+                    <textarea data-id=${column.id}>${column.title}</textarea>
                 </div>
                 <div class="column-buttons" data-id="${column.id}">
                     <button class="delete-column" data-id="${column.id}">Delete column</button><br>
@@ -56,7 +56,7 @@ function columnBuilder(column, boardId) {
 
 function cardBuilder(card) {
     return `<div class="card" data-id="${card.id}" >
-                    <h4 class="card-title" data-id="${card.id}">${card.title}</h4>
+                    <textarea class="card-title" data-id="${card.id}">${card.title}</textarea>
                     <button class="delete-card" data-id="${card.id}">Delete card</button>
             </div>`;
 }

@@ -26,10 +26,15 @@ export function buildCards(cards, columnId) {
 
 export function addCardListeners(cardId){
     domManager.addEventListener(
-        `h4[data-id="${cardId}"]`,
-        "click",
+        `.card-title[data-id="${cardId}"]`,
+        "mouseup",
         editCardTitle
     );
+    domManager.addEventListener(
+        `.card-title[data-id="${cardId}"]`,
+        "mousedown",
+        (e) => {e.preventDefault()}
+    )
     domManager.addEventListener(
         `.delete-card[data-id="${cardId}"]`,
         "click",
@@ -44,18 +49,15 @@ function dragAndDrop(cardId) {
 }
 
 function editCardTitle (clickEvent) {
-    const cardTitle = clickEvent.target;
-    const input = document.createElement("input")
-    const cardId = clickEvent.target.dataset.id
-    input.value = cardTitle.innerText;
-    cardTitle.replaceWith(input);
-    input.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            const newTitle = input.value;
-            input.replaceWith(cardTitle);
-            cardTitle.innerText = newTitle;
-            socket.emit('update_card_title', cardTitle.innerText, cardId)
-            apiPatch(`/api/cards/${cardId}`, editCardTitleTemplate(newTitle))
+    clickEvent.target.focus()
+    clickEvent.target.select()
+    const textarea = clickEvent.target;
+    textarea.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            socket.emit('update_card_title', textarea.value, textarea.dataset.id)
+            apiPatch(`/api/cards/${textarea.dataset.id}`, editCardTitleTemplate(textarea.value))
+            event.target.blur()
         }}
     );
 }

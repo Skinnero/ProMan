@@ -42,10 +42,15 @@ function addShowBoardListeners() {
 function addListeners (boardId) {
     //Add event listeners for board buttons
     domManager.addEventListener(
-        `h3[data-id="${boardId}"]`,
-        "click",
+        `.board-title textarea`,
+        "mouseup",
         editBoardTitle
-    );
+    )
+    domManager.addEventListener(
+        `.board-title textarea`,
+        "mousedown",
+        (e) => {e.preventDefault()}
+    )
     domManager.addEventListener(
         `.delete-board[data-id="${boardId}"]`,
         "click",
@@ -54,19 +59,16 @@ function addListeners (boardId) {
 }
 
 function editBoardTitle (clickEvent) {
-    const boardId = clickEvent.target.dataset.id
-    const boardTitle = clickEvent.target;
-    const input = document.createElement("input")
-    input.value = boardTitle.innerText;
-    boardTitle.replaceWith(input);
-    input.addEventListener("keydown", function(event) {
-        if (event.key === "Enter") {
-            const newTitle = input.value;
-            input.replaceWith(boardTitle);
-            boardTitle.innerText = newTitle;
-            document.querySelector(`.sidebar-board[data-id="${boardId}"] h5`).innerText = boardTitle.innerText
-            apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
-            socket.emit('update_board_title', boardId, boardTitle.innerText)
+    clickEvent.target.focus()
+    clickEvent.target.select()
+    const textarea = clickEvent.target;
+    textarea.addEventListener("keydown", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault()
+            document.querySelector(`.sidebar-board[data-id="${textarea.dataset.id}"] h5`).innerText = textarea.value
+            apiPatch(`/api/boards/${textarea.dataset.id}`, editBoardTitleTemplate(textarea.value))
+            socket.emit('update_board_title', textarea.dataset.id, textarea.value)
+            event.target.blur()
         }}
     )
 }
