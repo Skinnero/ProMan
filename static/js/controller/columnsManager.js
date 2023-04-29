@@ -1,9 +1,11 @@
 import {dataHandler, apiPost, apiDelete, apiPatch} from "../data/dataHandler.js";
 import {htmlFactory, htmlTemplates} from "../view/htmlFactory.js";
 import {domManager} from "../view/domManager.js";
-import { cardsManager, createNewCard } from "./cardManager.js";
+import { cardsManager, createNewCard, addCardListeners } from "./cardManager.js";
 import { editColumnTitleTemplate, createColumnTemplate } from "../data/dataTemplates.js";
 import {socket} from "./websocketsManager";
+
+let dragSource
 
 export let columnsManager = {
     loadColumns: async function (boardId) {
@@ -19,7 +21,8 @@ export async function buildColumns (columns, boardId) {
             const content = columnBuilder(column, boardId);
             domManager.addChild(`.board-content[data-id='${boardId}']`, content);
             await cardsManager.loadCards(column.id, boardId);
-            addColumnListeners(column.id, boardId)
+            addColumnListeners(column.id)
+            dragAndDrop()
         }
     }
     domManager.addEventListener(
@@ -29,7 +32,7 @@ export async function buildColumns (columns, boardId) {
     )
 }
 
-function addColumnListeners(columnId, boardId) {
+function addColumnListeners(columnId) {
     domManager.addEventListener(
         `h4[data-id="${columnId}"]`,
         "click",
@@ -37,7 +40,7 @@ function addColumnListeners(columnId, boardId) {
     domManager.addEventListener(
         `.delete-column[data-id="${columnId}"]`,
         "click",
-        () => deleteColumn(columnId, boardId));
+        () => deleteColumn(columnId));
     domManager.addEventListener(
         `.column-content[data-id="${columnId}"]`,
         "drop",
@@ -52,14 +55,16 @@ function addColumnListeners(columnId, boardId) {
         `.create-new-card[data-id="${columnId}"]`,
         "click",
         () => createNewCard(columnId));
-    dragAndDrop(columnId)
 }
 
-function dragAndDrop(columnId) {
-    const cardElement = document.querySelector(`.column[data-id="${columnId}"]`);
+function dragAndDrop() {
+    let cardElement = document.querySelectorAll(`.column`);
+    const cardLength = cardElement.length
+    cardElement = cardElement[cardLength - 1]
     cardElement.draggable = true;
     cardElement.addEventListener("dragstart", dragStartHandler);
-    cardElement.addEventListener("dragend", dragEndHandler);
+    cardElement.addEventListener("drop", dropColumnHandler);
+    cardElement.addEventListener("dragover", dragOverHandler);
 }
 
 function editColumnTitle (clickEvent) {
@@ -98,8 +103,10 @@ function dropHandler(event) {
     const cardId = event.dataTransfer.getData("text/plain");
     const targetColumn = event.currentTarget;
     const targetColumnId = targetColumn.dataset.id;
-    targetColumn.appendChild(document.querySelector(`.card[data-id='${cardId}']`));
-    apiPatch(`/api/cards/${cardId}`, { column_id: targetColumnId })
+    if (dragSource.classList[0] == 'card') {
+        targetColumn.appendChild(document.querySelector(`.card[data-id='${cardId}']`));
+        apiPatch(`/api/cards/${cardId}`, { column_id: targetColumnId })
+    }
 }
 
 function dragOverHandler(event) {
@@ -107,10 +114,27 @@ function dragOverHandler(event) {
 }
 
 function dragStartHandler(event) {
-    const cardElement = event.target;
-    event.dataTransfer.setData("text/plain", cardElement.dataset.id);
+    dragSource = event.target
+    event.dataTransfer.setData("text/plain", event.target.dataset.id)
 }
 
-function dragEndHandler(event) {
-    const cardElement = event.target;
+function dropColumnHandler() {
+    if (dragSource.classList[0] == 'column') {
+        let dragContent = this.innerHTML
+        let id = this.dataset.id
+        this.innerHTML = dragSource.innerHTML
+        dragSource.innerHTML = dragContent
+        this.dataset.id = dragSource.dataset.id
+        dragSource.dataset.id = id
+        addColumnListeners(dragSource.dataset.id)
+        addColumnListeners(this.dataset.id)
+        let cards = document.querySelectorAll(`.column[data-id='${dragSource.dataset.id}'] .card`)
+        for (let card of cards) {
+            addCardListeners(card.dataset.id)
+        }
+        cards = document.querySelectorAll(`.column[data-id='${this.dataset.id}'] .card`)
+        for (let card of cards) {
+            addCardListeners(card.dataset.id)
+        }
+    }
 }

@@ -64,10 +64,11 @@ function editBoardTitle (clickEvent) {
             const newTitle = input.value;
             input.replaceWith(boardTitle);
             boardTitle.innerText = newTitle;
+            document.querySelector(`.sidebar-board[data-id="${boardId}"] h5`).innerText = boardTitle.innerText
             apiPatch(`/api/boards/${boardId}`, editBoardTitleTemplate(newTitle))
-            socket.emit('update_board_title', boardTitle.innerText)
+            socket.emit('update_board_title', boardId, boardTitle.innerText)
         }}
-    );
+    )
 }
 
 async function deleteBoard (boardId) {
@@ -81,16 +82,16 @@ export async function createBoard() {
     // TODO: modal
     let boardName = prompt("Enter board name.")
     await apiPost("/api/boards", createBoardTemplate(boardName))
-    // let boards = await dataHandler.getBoards();
-    // let newBoard = boards[boards.length - 1];
-    // const sidebarElementBuilder = htmlFactory(htmlTemplates.sidebarElementBuilder)
-    // let content = sidebarElementBuilder(newBoard.title, newBoard.id)
-    // domManager.addChild(".sidebar", content);
-    // domManager.addEventListener(
-    //     `li[data-id="${newBoard.id}"]`,
-    //     "click",
-    //     showBoard
-    // );
+    let boards = await dataHandler.getBoards();
+    let newBoard = boards[boards.length - 1];
+    const sidebarElementBuilder = htmlFactory(htmlTemplates.sidebarElementBuilder)
+    let content = sidebarElementBuilder(newBoard.title, newBoard.id)
+    domManager.addChild(".sidebar", content);
+    domManager.addEventListener(
+        `li[data-id="${newBoard.id}"]`,
+        "click",
+        showBoard
+    )
 }
 
 function showBoard(clickEvent) {

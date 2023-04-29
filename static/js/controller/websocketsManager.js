@@ -3,12 +3,13 @@ import {buildColumns} from "./columnsManager.js"
 import {buildCards} from "./cardManager.js"
 export const socket = io("ws://127.0.0.1:5000")
 
-socket.on('update_board_title', (boardTitle) => {
+socket.on('update_board_title', (boardId, boardTitle) => {
     document.querySelector('.board-title h3').innerHTML = boardTitle
+    document.querySelector(`.sidebar-board[data-id="${boardId}"] h5`).innerText = boardTitle
 })
 
 socket.on('delete_board', (boardId) => {
-    document.querySelector(`.board[data-board-id='${boardId}']`).remove()
+    document.querySelector(`.board[data-id='${boardId}']`).remove()
     document.querySelector(`li[data-id='${boardId}']`).remove()
 })
 
@@ -29,7 +30,7 @@ socket.on('delete_column', (columnId) => {
 })
 
 socket.on('update_card_title', (cardTitle, cardId) => {
-    document.querySelector(`[data-card-id="${cardId}"] .card-title h4`).innerText = cardTitle
+    document.querySelector(`[data-id="${cardId}"] .card-title h4`).innerText = cardTitle
 })
 
 socket.on('update_card_position', () => {
@@ -41,5 +42,5 @@ socket.on('create_card', (cardData, columnId) => {
 })
 
 socket.on('delete_card', (cardId) => {
-    document.querySelector(`.card[data-card-id='${cardId}']`).remove()
+    document.querySelector(`.card[data-id='${cardId}']`).remove()
 })

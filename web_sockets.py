@@ -18,8 +18,8 @@ def on_leave(room_id):
 
 
 @socketio.on('update_board_title')
-def update_board_title(board_title):
-    emit('update_board_title', board_title, skip_sid=request.sid, to=rooms())
+def update_board_title(board_id, board_title):
+    emit('update_board_title', (board_id, board_title), skip_sid=request.sid, to=rooms())
 
 
 @socketio.on('delete_board')

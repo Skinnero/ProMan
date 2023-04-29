@@ -24,7 +24,7 @@ export function buildCards(cards, columnId) {
     }
 }
 
-function addCardListeners(cardId){
+export function addCardListeners(cardId){
     domManager.addEventListener(
         `h4[data-id="${cardId}"]`,
         "click",
@@ -41,7 +41,6 @@ function dragAndDrop(cardId) {
     const cardElement = document.querySelector(`.card[data-id="${cardId}"]`);
     cardElement.draggable = true;
     cardElement.addEventListener("dragstart", dragStartHandler);
-    cardElement.addEventListener("dragend", dragEndHandler);
 }
 
 function editCardTitle (clickEvent) {
@@ -64,13 +63,6 @@ function editCardTitle (clickEvent) {
 function dragStartHandler(event) {
     const cardElement = event.target;
     event.dataTransfer.setData("text/plain", cardElement.dataset.cardId);
-}
-
-function dragEndHandler(event) {
-    const cardElement = event.target;
-    // stary kod drag and drop działa bez ale zostawiam jakby kiedyś przestało
-    // cardElement.removeEventListener("dragstart", dragStartHandler);
-    // cardElement.removeEventListener("dragend", dragEndHandler);
 }
 
 function deleteCard(cardId) {

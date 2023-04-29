@@ -12,6 +12,7 @@ export const builderFunctions = {
     [htmlTemplates.board]: boardBuilder,
     [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
+    [htmlTemplates.sidebarElementBuilder]: sidebarElementBuilder,
 };
 
 export function htmlFactory(template) {
@@ -55,12 +56,13 @@ function columnBuilder(column, boardId) {
 
 function cardBuilder(card) {
     return `<div class="card" data-id="${card.id}" >
-                <div class="card-title">
-                    <h4 data-id="${card.id}">${card.title}</h4>
-                </div>
-                <div class="card-buttons" data-id="${card.id}">
+                    <h4 class="card-title" data-id="${card.id}">${card.title}</h4>
                     <button class="delete-card" data-id="${card.id}">Delete card</button>
-                </div>
             </div>`;
 }
 
+function sidebarElementBuilder(boardName, boardId) {
+    return `<li data-id="${boardId}">
+                <h5 data-id="${boardId}">${boardName}</h5>
+            </li>`
+}
