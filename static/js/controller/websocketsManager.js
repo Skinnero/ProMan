@@ -17,8 +17,16 @@ socket.on('update_column_title', (columnTitle, columnId) => {
     document.querySelector(`[data-id="${columnId}"] .column-title h4`).innerText = columnTitle
 })
 
-socket.on('update_column_position', () => {
-    // TODO: SCRIPT
+socket.on('update_column_position', (firstColumn, secondColumn) => {
+    console.log({firstColumn, secondColumn})
+    document.querySelector('.board-content').insertBefore(
+        document.querySelector(`.column[data-id="${firstColumn.id}"]`),
+        document.querySelector('.board-content').childNodes[firstColumn['order_number']]
+    )
+    document.querySelector('.board-content').insertBefore(
+        document.querySelector(`.column[data-id="${secondColumn.id}"]`),
+        document.querySelector('.board-content').childNodes[secondColumn['order_number']]
+    )
 })
 
 socket.on('create_column', (columnData, boardId) => {
@@ -33,8 +41,10 @@ socket.on('update_card_title', (cardTitle, cardId) => {
     document.querySelector(`[data-id="${cardId}"] .card-title h4`).innerText = cardTitle
 })
 
-socket.on('update_card_position', () => {
-    // TODO: SCRIPT
+socket.on('update_card_position', (cardId, newColumnId) => {
+    document.querySelector(`.column-content[data-id="${newColumnId}"]`).appendChild(
+        document.querySelector(`.card[data-id="${cardId}"]`)
+    )
 })
 
 socket.on('create_card', (cardData, columnId) => {

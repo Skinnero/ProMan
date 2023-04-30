@@ -109,6 +109,7 @@ function dropHandler(event) {
     if (dragSource.classList[0] == 'card') {
         targetColumn.appendChild(document.querySelector(`.card[data-id='${cardId}']`));
         apiPatch(`/api/cards/${cardId}`, { column_id: targetColumnId })
+        socket.emit('update_card_position', cardId, targetColumnId)
     }
 }
 
@@ -139,5 +140,6 @@ function dropColumnHandler() {
         for (let card of cards) {
             addCardListeners(card.dataset.id)
         }
+        socket.emit('update_column_position', this.dataset.id, dragSource.dataset.id)
     }
 }

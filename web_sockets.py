@@ -1,6 +1,7 @@
 from flask_socketio import rooms, join_room, leave_room, emit
 from flask import request
 from __main__ import socketio
+from data_handler.columns import get_one_by_id
 
 # ROOMS MANAGEMENT
 
@@ -35,8 +36,10 @@ def update_column_title(column_title, column_id):
 
 
 @socketio.on('update_column_position')
-def update_column_position():
-    emit('update_column_position', 'column_position ', skip_sid=request.sid, to=rooms())
+def update_column_position(first_column_id, second_column_id):
+    first_column = get_one_by_id(first_column_id)
+    second_column = get_one_by_id(second_column_id)
+    emit('update_column_position', (first_column, second_column), skip_sid=request.sid, to=rooms())
 
 
 @socketio.on('create_column')
@@ -57,8 +60,8 @@ def update_card_title(card_title, card_id):
 
 
 @socketio.on('update_card_position')
-def update_card_position():
-    emit('update_card_position', 'card_position', skip_sid=request.sid, to=rooms())
+def update_card_position(card_id, column_id):
+    emit('update_card_position', (card_id, column_id), skip_sid=request.sid, to=rooms())
 
 
 @socketio.on('create_card')
