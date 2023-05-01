@@ -1,10 +1,9 @@
+from __main__ import socketio
 from flask_socketio import rooms, join_room, leave_room, emit
 from flask import request
-from server import socketio
 from data_handler.columns import get_one_by_id
 
 # ROOMS MANAGEMENT
-
 
 @socketio.on('join')
 def on_join(room_id):
