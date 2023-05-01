@@ -6,6 +6,8 @@ export const htmlTemplates = {
     navbarBuilder: 5,
     sidebarBuilder: 6,
     sidebarElementBuilder: 7,
+    modal: 8,
+
 }
 
 export const builderFunctions = {
@@ -13,6 +15,8 @@ export const builderFunctions = {
     [htmlTemplates.column]: columnBuilder,
     [htmlTemplates.card]: cardBuilder,
     [htmlTemplates.sidebarElementBuilder]: sidebarElementBuilder,
+    [htmlTemplates.modal]: modal,
+
 };
 
 export function htmlFactory(template) {
@@ -65,4 +69,15 @@ function sidebarElementBuilder(boardName, boardId) {
     return `<li data-id="${boardId}">
                 <h5 data-id="${boardId}">${boardName}</h5>
             </li>`
+}
+
+function modal(title) {
+    return `<div class="modal">
+                <div class="modal-content">
+                <h4>Create ${title}</h4>
+                <input class="title"></input>
+                <br>
+                <button class="create">Create</button>
+                </div>
+            </div>`
 }

@@ -73,10 +73,21 @@ function deleteCard(cardId) {
     document.querySelector(`.card[data-id='${cardId}']`).remove()
 }
 
-export async function createNewCard (columnId) {
-    const cardName = prompt("Enter card name.")
-    await apiPost(`/api/columns/${columnId}/cards`, createCardTemplate(cardName,columnId))
-    const cards = await dataHandler.getCardsByBoardId(columnId);
-    socket.emit('create_card', cards, columnId)
-    buildCards([cards[cards.length - 1]], columnId)
+export function createNewCard (columnId) {
+    let modal = htmlFactory(htmlTemplates.modal);
+    let asd = modal('card')
+    domManager.addChild("#root", asd);
+    domManager.addEventListener(
+        `.create`,
+        "click",
+        () => sendDataAndBuild(document.querySelector(".title").value, columnId)
+    );
+
+    async function sendDataAndBuild(cardName, columnId){
+        document.querySelector(".modal").remove()
+        await apiPost(`/api/columns/${columnId}/cards`, createCardTemplate(cardName,columnId))
+        const cards = await dataHandler.getCardsByBoardId(columnId);
+        buildCards([cards[cards.length - 1]], columnId)
+        socket.emit('create_card', cards, columnId)
+    }
 }

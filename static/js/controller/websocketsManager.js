@@ -4,7 +4,7 @@ import {buildCards} from "./cardManager.js"
 export const socket = io("ws://127.0.0.1:5000")
 
 socket.on('update_board_title', (boardId, boardTitle) => {
-    document.querySelector('.board-title h3').innerHTML = boardTitle
+    document.querySelector('.board-title textarea').value = boardTitle
     document.querySelector(`.sidebar-board[data-id="${boardId}"] h5`).innerText = boardTitle
 })
 
@@ -14,11 +14,12 @@ socket.on('delete_board', (boardId) => {
 })
 
 socket.on('update_column_title', (columnTitle, columnId) => {
-    document.querySelector(`[data-id="${columnId}"] .column-title h4`).innerText = columnTitle
+    document.querySelector(`[data-id="${columnId}"] .column-title textarea`).value = columnTitle
 })
 
 socket.on('update_column_position', (firstColumn, secondColumn) => {
     console.log({firstColumn, secondColumn})
+    // TODO: FIX COLUMNS MOVEMENT
     document.querySelector('.board-content').insertBefore(
         document.querySelector(`.column[data-id="${firstColumn.id}"]`),
         document.querySelector('.board-content').childNodes[firstColumn['order_number']]
@@ -38,7 +39,7 @@ socket.on('delete_column', (columnId) => {
 })
 
 socket.on('update_card_title', (cardTitle, cardId) => {
-    document.querySelector(`[data-id="${cardId}"] .card-title h4`).innerText = cardTitle
+    document.querySelector(`[data-id="${cardId}"] .card-title textarea`).value = cardTitle
 })
 
 socket.on('update_card_position', (cardId, newColumnId) => {

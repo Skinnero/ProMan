@@ -24,7 +24,7 @@ app.config['JWT_SECRET_KEY'] = environ.get('JWT_SECRET_KEY')
 app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=5)
 
-socketio = SocketIO(app, cors_allowed_origins='*')
+socketio = SocketIO(app)
 jwt = JWTManager(app)
 import web_sockets
 

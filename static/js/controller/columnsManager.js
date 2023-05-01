@@ -87,12 +87,23 @@ function editColumnTitle (clickEvent) {
     )
 }
 
-export async function createNewColumn (boardId) {
-    const columnName = prompt("Enter column name.")
-    await apiPost(`/api/boards/${boardId}/columns`, createColumnTemplate(columnName, boardId))
-    const columns = await dataHandler.getColumnsByBoardId(boardId);
-    socket.emit('create_column', columns, boardId)
-    buildColumns([columns[columns.length - 1]], boardId)
+export function createNewColumn (boardId) {
+    let modal = htmlFactory(htmlTemplates.modal);
+    let asd = modal('column')
+    domManager.addChild("#root", asd);
+    domManager.addEventListener(
+        `.create`,
+        "click",
+        () => sendDataAndBuild(document.querySelector(".title").value, boardId)
+    );
+
+    async function sendDataAndBuild(columnName, boardId){
+        document.querySelector(".modal").remove()
+        await apiPost(`/api/boards/${boardId}/columns`, createColumnTemplate(columnName, boardId))
+        const columns = await dataHandler.getColumnsByBoardId(boardId);
+        socket.emit('create_column', columns, boardId)
+        buildColumns([columns[columns.length - 1]], boardId)
+    }
 }
 
 async function deleteColumn (columnId) {
@@ -122,7 +133,8 @@ function dragStartHandler(event) {
     event.dataTransfer.setData("text/plain", event.target.dataset.id)
 }
 
-function dropColumnHandler() {
+async function dropColumnHandler() {
+    // TODO: FIX NAME CHANGING AFTER SWAP COLUMNS
     if (dragSource.classList[0] == 'column') {
         let dragContent = this.innerHTML
         let id = this.dataset.id
@@ -132,6 +144,8 @@ function dropColumnHandler() {
         dragSource.dataset.id = id
         addColumnListeners(dragSource.dataset.id)
         addColumnListeners(this.dataset.id)
+        const columns = getColumnsOrder()
+        await apiPatch(`/api/boards/${dragSource.dataset.boardId}/columns`, columns)
         let cards = document.querySelectorAll(`.column[data-id='${dragSource.dataset.id}'] .card`)
         for (let card of cards) {
             addCardListeners(card.dataset.id)
@@ -142,4 +156,16 @@ function dropColumnHandler() {
         }
         socket.emit('update_column_position', this.dataset.id, dragSource.dataset.id)
     }
+}
+
+function getColumnsOrder() {
+    const columns = document.querySelectorAll('.column')
+    let columnsData = []
+    let index = 1
+    for (let column of columns) {
+        let data = {id: column.dataset.id, order_number: index}
+        columnsData.push(data)
+        index ++
+    }
+    return columnsData
 }

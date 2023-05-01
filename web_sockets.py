@@ -1,6 +1,6 @@
 from flask_socketio import rooms, join_room, leave_room, emit
 from flask import request
-from server import socketio
+from __main__ import socketio
 from data_handler.columns import get_one_by_id
 
 # ROOMS MANAGEMENT

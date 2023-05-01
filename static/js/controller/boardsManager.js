@@ -80,20 +80,30 @@ async function deleteBoard (boardId) {
     document.querySelector(`li[data-id='${boardId}']`).remove()
 }
 
-export async function createBoard() {
-    // TODO: modal
-    let boardName = prompt("Enter board name.")
-    await apiPost("/api/boards", createBoardTemplate(boardName))
-    let boards = await dataHandler.getBoards();
-    let newBoard = boards[boards.length - 1];
-    const sidebarElementBuilder = htmlFactory(htmlTemplates.sidebarElementBuilder)
-    let content = sidebarElementBuilder(newBoard.title, newBoard.id)
-    domManager.addChild(".sidebar", content);
+export function createBoard() {
+    let modal = htmlFactory(htmlTemplates.modal);
+    let asd = modal('board')
+    domManager.addChild("#root", asd);
     domManager.addEventListener(
-        `li[data-id="${newBoard.id}"]`,
+        `.create`,
         "click",
-        showBoard
-    )
+        () => sendDataAndBuild(document.querySelector(".title").value)
+    );
+
+    async function sendDataAndBuild(boardName){
+        document.querySelector(".modal").remove()
+        await apiPost("/api/boards", createBoardTemplate(boardName))
+        let boards = await dataHandler.getBoards();
+        let newBoard = boards[boards.length - 1];
+        const sidebarElementBuilder = htmlFactory(htmlTemplates.sidebarElementBuilder)
+        let content = sidebarElementBuilder(newBoard.title, newBoard.id)
+        domManager.addChild(".sidebar", content);
+        domManager.addEventListener(
+            `li[data-id="${newBoard.id}"]`,
+            "click",
+            showBoard
+        );
+    }
 }
 
 function showBoard(clickEvent) {

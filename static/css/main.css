@@ -155,3 +155,15 @@ textarea{
     background-color: inherit;
     border: none;
 }
+
+.modal {
+    z-index: 1;
+    background-color: red;
+    position: absolute;
+    left: 25%;
+    top: 25%;
+    width: 50%;
+    height: 25%;
+    border: 2px solid gold;
+    border-radius: 8px;
+}
