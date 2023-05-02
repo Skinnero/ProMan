@@ -22,7 +22,7 @@ def establish_connection(connection_data=None):
     if connection_data is None:
         connection_data = get_connection_data()
     try:
-        connect_str = "dbname={} user={} host={} password={} port{}".format(
+        connect_str = "dbname={} user={} host={} password={} port={}".format(
             connection_data['dbname'],
             connection_data['user'],
             connection_data['host'],
