@@ -22,11 +22,12 @@ def establish_connection(connection_data=None):
     if connection_data is None:
         connection_data = get_connection_data()
     try:
-        connect_str = "dbname={} user={} host={} password={}".format(
+        connect_str = "dbname={} user={} host={} password={} port{}".format(
             connection_data['dbname'],
             connection_data['user'],
             connection_data['host'],
-            connection_data['password']
+            connection_data['password'],
+            connection_data['port']
         )
         conn = connect(connect_str, **keepalive_kwargs)
         conn.autocommit = True
@@ -49,7 +50,8 @@ def get_connection_data(db_name: str = None):
         'dbname': db_name,
         'user': environ.get('MY_PSQL_USER'),
         'host': environ.get('MY_PSQL_HOST'),
-        'password': environ.get('MY_PSQL_PASSWORD')
+        'password': environ.get('MY_PSQL_PASSWORD'),
+        'port': environ.get('MY_PSQL_PORT')
     }
 
 
