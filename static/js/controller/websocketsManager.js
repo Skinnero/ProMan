@@ -1,7 +1,7 @@
 import {io} from "socket.io-client"
 import {buildColumns} from "./columnsManager.js"
 import {buildCards} from "./cardManager.js"
-export const socket = io("ws://127.0.0.1:5000")
+export const socket = io("ws://127.0.0.1:8000")
 
 socket.on('update_board_title', (boardId, boardTitle) => {
     document.querySelector('.board-title textarea').value = boardTitle

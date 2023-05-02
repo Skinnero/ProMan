@@ -21,12 +21,25 @@ app.register_blueprint(api_cards)
 app.register_blueprint(api_users)
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = environ.get('JWT_SECRET_KEY')
+app.config['FLASK_RUN_PORT'] = 8000
 
 app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=5)
 
 socketio = SocketIO(app, cors_allowed_origins='*')
 jwt = JWTManager(app)
+
+
+@app.route("/")
+@jwt_required(optional=True)
+def index():
+    """Render main page
+
+    Returns:
+        render_template: index.html
+    """
+    return render_template('index.html', boards=get_all(), user=get_jwt_identity())
+
 
 # ROOMS MANAGEMENT
 
@@ -99,17 +112,6 @@ def delete_card_handler(card_id):
     emit('delete_card', card_id, skip_sid=request.sid, to=rooms())
 
 
-@app.route("/")
-@jwt_required(optional=True)
-def index():
-    """Render main page
-
-    Returns:
-        render_template: index.html
-    """
-    return render_template('index.html', boards=get_all(), user=get_jwt_identity())
-
-
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, host='127.0.0.1', port=8000)
 
