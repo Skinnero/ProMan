@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+keepalive_kwargs = {
+  "keepalives": 1,
+  "keepalives_idle": 60,
+  "keepalives_interval": 10,
+  "keepalives_count": 5
+}
+
 
 def establish_connection(connection_data=None):
     """
@@ -21,7 +28,7 @@ def establish_connection(connection_data=None):
             connection_data['host'],
             connection_data['password']
         )
-        conn = connect(connect_str)
+        conn = connect(connect_str, **keepalive_kwargs)
         conn.autocommit = True
         return conn.cursor(cursor_factory=RealDictCursor)
     except DatabaseError as e:

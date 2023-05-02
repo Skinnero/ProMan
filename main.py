@@ -21,8 +21,6 @@ app.register_blueprint(api_cards)
 app.register_blueprint(api_users)
 app.config['SECRET_KEY'] = environ.get('SECRET_KEY')
 app.config['JWT_SECRET_KEY'] = environ.get('JWT_SECRET_KEY')
-app.config['FLASK_RUN_PORT'] = 8000
-
 app.config['JWT_TOKEN_LOCATION'] = ["cookies"]
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=5)
 
