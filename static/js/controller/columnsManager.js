@@ -11,6 +11,11 @@ export let columnsManager = {
     loadColumns: async function (boardId) {
         const columns = await dataHandler.getColumnsByBoardId(boardId);
         buildColumns(columns, boardId)
+        domManager.addEventListener(
+            `.create-new-column[data-id="${boardId}"]`,
+            "click",
+            () => createNewColumn(boardId)
+        )
     },
 };
 
@@ -25,11 +30,6 @@ export async function buildColumns (columns, boardId) {
             dragAndDrop()
         }
     }
-    domManager.addEventListener(
-        `.create-new-column[data-id="${boardId}"]`,
-        "click",
-        () => createNewColumn(boardId)
-    )
 }
 
 function addColumnListeners(columnId) {
@@ -37,11 +37,6 @@ function addColumnListeners(columnId) {
         `.column-title[data-id="${columnId}"] textarea`,
         "mouseup",
         editColumnTitle);
-    domManager.addEventListener(
-        `.column-title[data-id="${columnId}"] textarea`,
-        "mousedown",
-        (e) => {e.preventDefault()}
-    )
     domManager.addEventListener(
         `.delete-column[data-id="${columnId}"]`,
         "click",
@@ -74,12 +69,11 @@ function dragAndDrop() {
 }
 
 function editColumnTitle (clickEvent) {
-    clickEvent.target.focus()
-    clickEvent.target.select()
     const textarea = clickEvent.target;
     textarea.addEventListener("keydown", function(event) {
         if (event.keyCode === 13) {
             event.preventDefault()
+            textarea.innerHTML = textarea.value
             socket.emit('update_column_title', textarea.value, textarea.dataset.id)
             apiPatch(`/api/columns/${textarea.dataset.id}`, editColumnTitleTemplate(textarea.value))
             event.target.blur()
@@ -89,12 +83,17 @@ function editColumnTitle (clickEvent) {
 
 export function createNewColumn (boardId) {
     let modal = htmlFactory(htmlTemplates.modal);
-    let asd = modal('column')
-    domManager.addChild("#root", asd);
+    let content = modal('column')
+    domManager.addChild("#root", content);
     domManager.addEventListener(
         `.create`,
         "click",
         () => sendDataAndBuild(document.querySelector(".title").value, boardId)
+    );
+    domManager.addEventListener(
+        `.cancel`,
+        "click",
+        cancelCreate
     );
 
     async function sendDataAndBuild(columnName, boardId){
@@ -103,6 +102,9 @@ export function createNewColumn (boardId) {
         const columns = await dataHandler.getColumnsByBoardId(boardId);
         socket.emit('create_column', columns, boardId)
         buildColumns([columns[columns.length - 1]], boardId)
+    }
+    function cancelCreate () {
+        document.querySelector(".modal").remove()
     }
 }
 
@@ -134,7 +136,6 @@ function dragStartHandler(event) {
 }
 
 async function dropColumnHandler() {
-    // TODO: FIX NAME CHANGING AFTER SWAP COLUMNS
     if (dragSource.classList[0] == 'column') {
         let dragContent = this.innerHTML
         let id = this.dataset.id

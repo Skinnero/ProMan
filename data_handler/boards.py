@@ -60,8 +60,8 @@ def add(board_data: dict):
         return CURSOR.fetchone()
 
     try:
-        data = [board_data['title'], board_data['user_id']]
-        query = 'INSERT INTO boards(title, user_id) VALUES (%s, %s)'
+        data = [board_data['title'], board_data['user_id'], board_data['private'] ]
+        query = 'INSERT INTO boards(title, user_id, private) VALUES (%s, %s, %s)'
         CURSOR.execute(query, data)
         create_default_columns(get_most_recent())
         return 'Board Created'
@@ -99,3 +99,20 @@ def update_by_id(board_id: int, boards_data: dict):
     else:
         return False, 'KeyError: Passed wrong key'
     return True, 'Board updated successfully'
+
+
+def get_archived_cards(board_id):
+    """
+        Gets all cards that are archived
+    Args:
+        board_id:zz
+
+    Returns:
+        List[RealDictRow] with archived cards
+    """
+    data =[board_id]
+    query = ''' SELECT c.id, c.title, c.submission_time FROM cards as c JOIN columns ON columns.id=c.column_id
+                WHERE columns.board_id = %s and c.archived = true ORDER BY c.submission_time
+            '''
+    CURSOR.execute(query, data)
+    return CURSOR.fetchall()

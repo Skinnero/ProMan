@@ -19,24 +19,35 @@
         <div id="root">
             <header>
                 {% if user == none %}
-                    <a style="color: white;">Login</a>
+                    <span style="color: white;">Login:</span>
                     <input class="login" style="background: white;">
-                    <a style="color: white;">Password</a>
+                    <span style="color: white;">Password:</span>
                     <input class="password" type="password" style="background: white;">
-                    <button class="login-button">Login</button>
-                    <button class="register-button">Register</button>
+                    <button class="login-button">Log in</button>
+                    <button class="register-button">Sign up</button>
                 {% else %}
-                    <button class="logout-button">Logout</button>
-                    <a>{{user['name']}}</a>
+                    <button class="logout-button">Log out</button>
+                    <span>Logged as {{user['name']}}</span>
                 {% endif%}
             </header>
             <nav>
                 <ul class="sidebar">
-                    <li data-id="createBoard">
-                        <h5>Create new board</h5>
+                    <li id="cb-button" data-id="createBoard">
+                        <button>Create new board</button>
                     </li>
+                    {% if user %}
+                        <li class="private-boards"><h4>Private boards</h4></li>
+                    {% endif %}
                     {% for board in boards %}
-                        {% if board['private'] == false or board['user_id'] == user['id'] %}
+                        {% if board['user_id'] == user['id'] and board['private']%}
+                            <li class="sidebar-board" data-id="{{board['id']}}">
+                                <h5 data-id="{{board['id']}}">{{board['title']}}</h5>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                        <li class="public-boards"><h4>Public boards</h4></li>
+                    {% for board in boards %}
+                        {% if not board['private']%}
                             <li class="sidebar-board" data-id="{{board['id']}}">
                                 <h5 data-id="{{board['id']}}">{{board['title']}}</h5>
                             </li>

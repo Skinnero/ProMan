@@ -1,5 +1,7 @@
-export function createBoardTemplate(boardName) {
-    return {"title": boardName, "user_id": 1}
+
+
+export function createBoardTemplate(boardName, visibility) {
+    return {"title": boardName, "private": visibility}
 }
 
 export function editBoardTitleTemplate(boardTitle) {

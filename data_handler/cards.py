@@ -1,6 +1,6 @@
 from data_handler.db_connection import CURSOR
 from psycopg2.errors import InvalidTextRepresentation, ForeignKeyViolation
-
+from datetime import datetime
 
 def get_one_by_id(card_id: int):
     """Get card by its id
@@ -36,7 +36,6 @@ def add(column_id: int, card_data: dict):
         column_id (int): column id
         card_data (dict): dict with key 'name' and 'column_id'
     """
-    from datetime import datetime
     try:
         data = [card_data['title'], get_new_order_number(column_id), column_id, datetime.now()]
         query = 'INSERT INTO cards(title, order_number, column_id, submission_time) VALUES (%s, %s, %s, %s)'
@@ -57,11 +56,10 @@ def delete_by_id(card_id: int):
     Returns:
         bool: true if successful otherwise false
     """
-    # TODO: Order Number of first record
     try:
         card_data = get_one_by_id(card_id)
-        query = 'UPDATE cards SET archived=true where id = %s'
-        CURSOR.execute(query, [card_id])
+        query = 'UPDATE cards SET archived = true, submission_time = %s where id = %s'
+        CURSOR.execute(query, [datetime.now(), card_id])
         sort_out_on_delete(card_data['column_id'], card_data['order_number'])
         return True, 'Card deleted successfully'
     except KeyError:
@@ -178,7 +176,6 @@ def sort_out_on_update(column_id: int, order_number: int, card: dict):
     """
     if card['order_number'] < order_number:
         data = [column_id, card['order_number'], order_number]
-        print(data)
         query = '''
         UPDATE cards SET order_number = order_number - 1 
         WHERE column_id = %s AND order_number BETWEEN %s AND %s'''

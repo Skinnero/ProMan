@@ -36,7 +36,7 @@ CREATE TABLE cards (
     title text NOT NULL,
     order_number INTEGER NOT NULL,
     archived bool NOT NULL default false,
-    submission_time timestamp without time zone NOT NULL,
+    submission_time timestamp NOT NULL,
     column_id INTEGER NOT NULL
 );
 
