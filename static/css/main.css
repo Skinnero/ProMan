@@ -2,24 +2,22 @@
     background-color: green;
 }
 body {
+    margin: 0;
     font-family: 'Quicksand', sans-serif;
     background: rgb(0,117,149);
     background: linear-gradient(42deg, rgba(0,117,149,1) 0%, rgba(19,138,181,1) 35%, rgba(120,188,255,1) 60%, rgba(169,241,255,1) 100%);
-    height: 100vh;
     background: #23242a;
 
 }
 .board {
+    position: absolute;
     background: #1c1c1c;
-    left: 45%;
-    margin-left: 17.5%;
-    margin-right: auto;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    left: 16.5rem;
+    top: 5rem;
     border: 4px solid #45f3ff;
     border-radius: 8px;
-    height: auto;
-    width: 80%;
+    max-height: 50rem;
+    max-width: 80rem;
     white-space: nowrap;
     overflow-x: auto;
 }
@@ -32,18 +30,16 @@ body {
     background: #222;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 .column {
     border: 3px solid #ff2770;
     border-radius: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px 0 10px 10px;
     display: inline-flex;
     flex-direction: column;
-    width: 23%;
+    width: 15rem;
     height: auto;
     min-height: 200px;
     background: rgb(40, 45, 52);
@@ -53,17 +49,14 @@ body {
 .column-content {
     width: 100%;
     height: auto;
-    min-height: 100px;
+    min-height: 6.4rem;
 }
 
 button {
     font-family: inherit;
     color: #fff;
-    height: 20px;
-    margin-left: 10px;
-    margin-right: 10px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    height: 1.3rem;
+    margin: 10px 10px 10px 10px;
     background-color: #1c1c1c;
     border: none;
     border-radius: 10px;
@@ -71,16 +64,17 @@ button {
 button:hover {
     color: #1c1c1c;
     cursor: pointer;
-    background-color: #fff;
+    background-color: #8f8787;
     transition: 1s;
   }
+
 h5 {
     color: #fff;
-    left: 0;
-    display: flex;
+    text-align: center;
 }
 
 h4 {
+    text-decoration: underline;
     color: #fff;
     letter-spacing: 0.1em;
     margin: 10px 10px 10px 10px;
@@ -100,54 +94,74 @@ h3 {
 }
 
 input {
+    font-family: inherit;
+    height: 20px;
     color: rgb(78, 82, 89);
     border: none;
-    justify-content: center;
-    align-items: center;
+    border-radius: 10px;
 }
 
 header {
+    padding: 5px;
     border: 3px solid #ff2770;
-    width: 100%;
-    height: 7%;
+    margin: auto;
+    height: 3rem;
     background: rgb(40, 45, 52);
+    position: relative;
+    border-radius: 3px;
+    font-size: 20px;
 }
 
-nav {
+header span {
+    margin: auto 15px auto 15px;
+}
+header button {
+    font-size: 20px;
+    height: auto;
+}
+
+nav{
     border: 3px solid #ff2770;
-    position: absolute;
-    top: 7%;
-    bottom: 100%;
-    height: 100%;
-    width: 15%;
+    top: 5vh;
+    min-height: 10rem;
+    max-width: 15rem;
     background: rgb(40, 45, 52);
     overflow: hidden;
+    border-radius: 3px;
 }
 
 .sidebar{
     list-style: none;
-    margin: 0px;
     padding: 2%;
 }
-
-li {
-    left: 0;
-    cursor: pointer;
-    padding-top: 0px;
-    padding-bottom: 0px;
-    margin: 0px;
+li{
+    margin: auto;
+    text-align: center;
+}
+li button{
+    font-size: 16px;
+    background-color: #4ef037;
+    color: black;
+}
+li button:hover{
+    background-color: #4ef037;
 }
 
-li:hover {
+li h5{
+    cursor: pointer;
+}
+
+li h5:hover {
     background: rgb(78, 82, 89);
     transition: 1s;
+    border-radius: 10px;
 }
 
 textarea{
     color: white;
     font-size: 20px;
     width: 90%;
-    height: 26px;
+    height: 30px;
     margin: 10px 4% 0 4%;
     font-family: inherit;
     wrap-option: wrap;
@@ -156,14 +170,133 @@ textarea{
     border: none;
 }
 
+.history-modal {
+    position: fixed;
+    z-index: 1;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.history-modal-content {
+    color: white;
+    background-color: #303841;
+    margin: auto 5% auto 5%;
+    border: 3px solid #45f3ff;
+    border-radius: 8px;
+}
+
 .modal {
     z-index: 1;
-    background-color: red;
-    position: absolute;
-    left: 25%;
-    top: 25%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.modal-content {
+    background-color: #303841;
+    margin: auto;
+    display: flex;
     width: 50%;
-    height: 25%;
-    border: 2px solid gold;
+    flex-direction: column;
+    border: 3px solid #4ef037;
     border-radius: 8px;
+    padding: 15px;
+    align-items: center;
+}
+
+.delete-board {
+    background-color: #ff2770;
+    color: black;
+}
+
+.delete-board:hover {
+    color: black;
+    background-color: #ff2770;
+}
+
+.delete-column {
+    width: 13.8rem;
+    color: black;
+    background-color: #ff2770;
+}
+.delete-column:hover {
+    background-color: #ff2770;
+}
+
+.create-new-card {
+    width: 13.8rem;
+    color: black;
+    background-color: #4ef037;
+}
+
+.delete-card {
+    width: 10.8rem;
+    color: black;
+    background-color: #ff2770;
+}
+.delete-card:hover {
+    background-color: #ff2770;
+}
+.create-new-column {
+    background-color: #4ef037;
+    color: black;
+}
+.create-new-column:hover {
+    background-color: #4ef037;
+}
+.view-history {
+    background-color: #45f3ff;
+    color: black;
+}
+.view-history:hover {
+    background-color: #45f3ff;
+}
+
+.create{
+    width: 20%;
+    background-color: #4ef037;
+    color: black;
+}
+.create:hover{
+    background-color: #4ef037;
+}
+.cancel{
+    width: 20%;
+    color: black;
+    background-color: #ff2770;
+}
+.cancel:hover{
+    background-color: #ff2770;
+}
+.modal-content .title{
+    width: 95%;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    transition: 1s;
 }

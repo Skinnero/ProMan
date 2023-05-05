@@ -7,7 +7,9 @@ export const htmlTemplates = {
     sidebarBuilder: 6,
     sidebarElementBuilder: 7,
     modal: 8,
-
+    historyCardsModal: 9,
+    archivedCardBuilder: 10,
+    registerModal: 11,
 }
 
 export const builderFunctions = {
@@ -16,7 +18,9 @@ export const builderFunctions = {
     [htmlTemplates.card]: cardBuilder,
     [htmlTemplates.sidebarElementBuilder]: sidebarElementBuilder,
     [htmlTemplates.modal]: modal,
-
+    [htmlTemplates.historyCardsModal]: historyCardsModal,
+    [htmlTemplates.archivedCardBuilder]: archivedCardBuilder,
+    [htmlTemplates.registerModal]: registerModal,
 };
 
 export function htmlFactory(template) {
@@ -39,6 +43,7 @@ function boardBuilder(board) {
                 </div>
                 <div class="board-buttons">
                     <button class="create-new-column" data-id=${board.id}>Create new column</button>
+                    <button class="view-history" data-id=${board.id}>View history</button>
                     <button class="delete-board" data-id=${board.id}>Delete board</button>
                 </div>
             </div>`;
@@ -72,12 +77,55 @@ function sidebarElementBuilder(boardName, boardId) {
 }
 
 function modal(title) {
-    return `<div class="modal">
+    return  `<div class="modal">
                 <div class="modal-content">
                 <h4>Create ${title}</h4>
-                <input class="title"></input>
-                <br>
+                <input class="title">
                 <button class="create">Create</button>
+                <button class="cancel">Cancel</button>
                 </div>
             </div>`
+}
+
+function historyCardsModal() {
+    return `<div class="history-modal">
+                <div class="history-modal-content">
+                    <table>
+                        <tr>
+                            <th style="width: 10%">Id</th>
+                            <th style="width: 80%">Title</th>
+                            <th style="width: 10%">Submission time</th>
+                        </tr>
+                    </table>
+                </div> 
+            </div>`
+}
+
+function archivedCardBuilder(card) {
+    return `<tr>
+                <th>${card.id}</th>
+                <th>${card.title}</th>
+                <th>${card['submission_time']}</th>
+            </tr>
+    `
+}
+
+function registerModal() {
+    return  `<div class="modal">
+                <div class="modal-content">
+                    <h4>Register</h4>
+                    <a style="color: white;">Login</a>
+                    <input class="login-register"></input>
+                    <br>
+                    <a style="color: white;">Password</a>
+                    <input class="password-register" type="password"></input>
+                    <br>
+                    <a style="color: white;">Confirm password</a>
+                    <input class="confirm-password-register" type="password"></input>
+                    <br>
+                    <button class="confirm-register">Register</button>
+                    <button class="cancel">Cancel</button>
+                </div>
+            </div>`
+
 }

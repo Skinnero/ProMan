@@ -34,17 +34,63 @@ export function menuListeners () {
 }
 
 async function loginButton() {
-	// TODO: wrong data alert
     let login = document.querySelector('.login').value
     let password = document.querySelector('.password').value
-    await apiPost("/api/users/log-in", loginTemplate(login, password))
-    location.reload()
+    let response  = await fetch("/api/users/log-in", {
+      method:'POST', 
+      headers:{
+          'Content-Type':'application/json'
+      },
+      body:JSON.stringify(loginTemplate(login, password))
+    })
+    if(response.ok) {
+        window.location="/"
+    } else {
+        alert('Wrong login or password')
+    }
 }
 
-async function signupButton() {
-	// TODO: user exists alert
-    let login = document.querySelector('.login').value
-    let password = document.querySelector('.password').value
-    await apiPost("/api/users/sign-up", registerTemplate(login, password))
-    location.reload()
+function signupButton() {
+    const registerModal = htmlFactory(htmlTemplates.registerModal);
+    const content = registerModal();
+    domManager.addChild("#root", content);
+    domManager.addEventListener(
+        `.cancel`,
+        "click",
+        cancelRegister
+    );
+    domManager.addEventListener(
+        `.confirm-register`,
+        "click",
+        register
+    );
+
+    async function register() {
+        let login = document.querySelector('.login-register').value
+        let password = document.querySelector('.password-register').value
+        let confirmPassword = document.querySelector('.confirm-password-register').value
+        if (password != confirmPassword) {
+            alert('Passwords are not the same')
+        } else {
+            let response  = await fetch("/api/users/sign-up", {
+                method:'POST', 
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify(registerTemplate(login, password))
+              })
+            if (response.ok) {
+                alert('You registered sucesfully')
+                window.location="/"
+            } else {
+                alert('Login is busy')
+            }
+
+        }
+    }
+
+
+    function cancelRegister () {
+        document.querySelector(".modal").remove()
+    }
 }

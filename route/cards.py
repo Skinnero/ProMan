@@ -57,3 +57,5 @@ def manage_single_card(card_id: int):
     elif request.method == 'PATCH':
         result, response = cards.update_by_id(card_id, request.json)
         return (response, 200) if result else (response, 404)
+
+

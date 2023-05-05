@@ -2,8 +2,8 @@ export let dataHandler = {
     getBoards: async function () {
         return await apiGet(`/api/boards`)
     },
-    getBoard: async function (boardId) {
-        return await apiGet(`/api/boards/${boardId}`);
+    getArchivedCard: async function (boardId) {
+        return await apiGet(`/api/boards/${boardId}/archived-cards`)
     },
     getColumnsByBoardId: async function (boardId) {
         return await apiGet(`/api/boards/${boardId}/columns`)
